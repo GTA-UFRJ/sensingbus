@@ -19,3 +19,6 @@ Technology: Raspberry Pi
 
 ## The Publishing Node
 Technology: Django
+
+## References
+- http://www.gta.ufrj.br/ftp/gta/TechReports/CPCC16.pdf
