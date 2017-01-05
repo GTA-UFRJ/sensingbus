@@ -3,72 +3,77 @@
 const char* ssid     = "sense";
 const char* password = "S3ns1nG_bu5"; 
 const char* host = "146.164.69.186";
+const int httpPort = 50000;
 const char* skpln = "\r\n";
+const char* request = "?";
+const char* clear_to_send = ":";
+const char* wait_to_send = "!";
 String url = "/";
  
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   delay(100);
  
   // We start by connecting to a WiFi network
-  /*
-  Serial.println();
-  Serial.println();
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  //*/
-  
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    //Serial.print(".");
+    //Serial.println("Searching WiFi");
   }
- 
-  //Serial.println("");
-  Serial.println("WiFi connected");  
-  //Serial.println("IP address: ");
-  //Serial.println(WiFi.localIP());
 }
- 
-int value = 0;
- 
+
 void loop() {
-  delay(5000);
-  ++value;
-  int data_length = 10;
-  const char* data = "username=zurfyx";
-  //Serial.print("connecting to ");
-  //Serial.println(host);
-  
+  delay(500);
+  bool connected = false;
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
-  const int httpPort = 50000;
+  
   if (!client.connect(host, httpPort)) {
-    Serial.println("connection failed");
-    return;
+    connected=false;
+  } else {
+    connected = true;
   }
-  
-  // We now create a URI for the request
-  
-  //Serial.print("Requesting URL: ");
-  //Serial.println(url);
-  
-  // This will send the request to the server
-  client.print(String("POST ") + url + " HTTP/1.1" + skpln +
-               "Host: " + host + skpln + 
-               "Connection: close" + skpln + 
-               "Content-Type: application/x-www-form-urlencoded" + skpln +
-               "Content-Length:" + data_length + skpln + skpln +
-               data);
-  delay(500);
-  
+
+  char a;
+  while(Serial.available()){
+    a = Serial.read();
+    if (String(a) == String(request)){
+      if(connected){
+        Serial.write(clear_to_send);
+
+        while(!Serial.available()){}
+         // Receive data from serial
+        char index = 0;
+        char temp = 0;
+        String dataString = "";
+        while(Serial.available()){
+          delay(100);
+          temp = Serial.read();
+          dataString += String(temp);
+          index++;
+        }
+        if (dataString.length() > 0){
+        // This will send the request to the server
+        client.print(String("POST ") + url + " HTTP/1.1" + skpln +
+                     "Host: " + host + skpln + 
+                     "Connection: close" + skpln + 
+                     "Content-Type: application/x-www-form-urlencoded" + skpln +
+                     "Content-Length:" + dataString.length() + skpln + skpln +
+                     dataString);
+        }    
+      }else{
+        Serial.write(wait_to_send);
+      }
+    }
+  }
+
   // Read all the lines of the reply from server and print them to Serial
-  while(client.available()){
+  /*while(client.available()){
     String line = client.readStringUntil('\r');
     Serial.print(line);
   }
   
   Serial.println();
-  Serial.println("closing connection");
+  Serial.println("closing connection");*/
 }
