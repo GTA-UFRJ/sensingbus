@@ -1,5 +1,6 @@
 #include <ESP8266WiFi.h>
- 
+
+#define DIGITAL_OUT 2
 const char* ssid     = "sense";
 const char* password = "S3ns1nG_bu5"; 
 const char* host = "146.164.69.186";
@@ -12,17 +13,15 @@ const String end_of_file = "#";
 String url = "/";
  
 void setup() {
-  Serial.begin(9600);
-  delay(100);
-  Serial.println("Started");
+  Serial.begin(38400);
+  pinMode(2, OUTPUT);
+  
   // We start by connecting to a WiFi network
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.println("Searching WiFi");
   }
-  Serial.println("WiFi connected");
 }
 
 void loop() {
@@ -30,13 +29,13 @@ void loop() {
   bool connected = false;
   // Use WiFiClient class to create TCP connections
   WiFiClient client;
-  Serial.println("loop");
   if (!client.connect(host, httpPort)) {
     connected=false;
   } else {
     connected = true;
   }
-  Serial.println("Connection started");
+
+  // Wait for data input
   char a;
   while(Serial.available()){
     a = Serial.read();
@@ -51,6 +50,10 @@ void loop() {
         while(true){
           if (Serial.available()){
             temp = String(char(Serial.read()));
+            if(temp == request){
+              Serial.write(clear_to_send);
+              continue;
+            }
             if(temp != end_of_file){
               dataString += temp;
             }else{
@@ -67,7 +70,7 @@ void loop() {
                      "Content-Type: application/x-www-form-urlencoded" + skpln +
                      "Content-Length:" + dataString.length() + skpln + skpln +
                      dataString);
-          Serial.println(dataString);
+          //Serial.println(dataString);
         }
       }else{
         Serial.write(wait_to_send);
