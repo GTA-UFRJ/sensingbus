@@ -45,7 +45,7 @@
 #define clear_to_send ":"
 #define end_of_file "#"
 #define wifi_freq 10
-#define wifi_timeout 100
+#define wifi_timeout 20
 
 #define SEPARATOR ","
 
@@ -167,7 +167,6 @@ void send_data() {
     a = char(data_file.read());
     wifiSerial.write(a);
     delay(5);
-    //Serial.write(a);
   }
   wifiSerial.write(end_of_file);
   data_file.close();
@@ -201,13 +200,6 @@ void loop() {
       delay(100);
     }
 
-#if DEBUG
-    if (wifiSerial.available()) {
-      print_debug(5); //WiFi available
-    } else {
-      print_debug(8); //WiFi not available
-    }
-#endif
     String wifiIn("");
     while (wifiSerial.available()) {
       delay(100);
@@ -215,6 +207,11 @@ void loop() {
     }
     if (wifiIn == clear_to_send) {
       send_data();
+#if DEBUG
+      print_debug(5); //WiFi available
+    } else {
+      print_debug(8); //WiFi not available
+#endif      
     }
   }
 
