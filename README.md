@@ -27,7 +27,7 @@ There should be one node per bus.
 
 #### The Sensing Node
 
-Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. To achieve that, this is the architecture of the Sensing Node:
+Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. The Sensing Node follows an architecture presented on [1] and ilustrated here:
 
 <img src="img/sensing_node.png" alt="System layers" width="50%" height="50%" align="middle"/>
 
@@ -59,9 +59,12 @@ Technology: Raspberry Pi
 
 ### The Publishing layer
 <!-- This section must explain what is the publishing layer. What are its tasks inside the environment. -->
-
+<!-- Please reffer to reference number 2, to help talking about the distributed cloud -->
 #### The Publishing Node
 Technology: Django
 
 ## References
-- http://www.gta.ufrj.br/ftp/gta/TechReports/CPCC16.pdf
+<ol>
+<li>http://www.gta.ufrj.br/ftp/gta/TechReports/CPCC16.pdf</li>
+<li>http://www.gta.ufrj.br/ftp/gta/TechReports/CSB15.pdf</li>
+</ol>
