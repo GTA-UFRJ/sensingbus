@@ -20,18 +20,47 @@ The Publishing layer receives data from all the nodes in the Flushing layer and 
 
 Each layer is a component of this project, as explained in detail throughout the next sections.
 
-## Sensing layer
+### Sensing layer
 The Sensing layer is a mobile wireless sensor network that gathers data from the city, using buses as mobility platform. Every node in this network is capable of gathering data, storing it and send it to the Flushing layer.
 
-## The Sensing Node
+There should be one node per bus.
 
-The sensing 
-Technology: Arduino + ESP8266
+#### The Sensing Node
 
-## The Flushing Node
+Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. To achieve that, this is the architecture of the Sensing Node:
+
+<img src="img/sensing_node.png" alt="System layers" width="20%" height="20%" align="middle"/>
+
+The devices used to implement each module are on teh following table:
+
+| Module                 | Device         | Manufacturer    |
+|------------------------|----------------|-----------------|
+| Controller             | Arduino UNO R3 | Arduino         |
+| GNSS Receiver          | GS-96U7        | Guangzhou Xintu |
+| SD Card Interface      | GS-96U7        | Guangzhou Xintu |
+| Wireless Interface     | ESP8266        | Espressif       |
+
+The sensor bank has the following sensors:
+
+| Sensor                 | Device         | Manufacturer    |
+|------------------------|----------------|-----------------|
+| Humidity               | DHT11          | DFRobot         |
+| Temperature            | DHT11          | DFRobot         |
+| Light Intensity        | GL5528         | GBK Robotics    |
+| Rain Intensity         | YL-38          | 100y            |
+
+The Controller and Wireless Interface are programmable devices. In the folder "sensing" of the current project, the codes used in each of them can be found.
+
+### The Flushing layer
+<!-- This section must explain what is the flushing layer. What are its tasks inside the environment. -->
+
+#### The Flushing node
 Technology: Raspberry Pi
 
-## The Publishing Node
+### The Publishing layer
+<!-- This section must explain what is the publishing layer. What are its tasks inside the environment. -->
+
+#### The Publishing Node
 Technology: Django
 
 ## References
