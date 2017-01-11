@@ -11,7 +11,8 @@ This project has three main components:
 
 These components are explained in detail throughout the next sections
 
-![Figure 1-1](img/legend.png "Figure 1-1")
+<img src="img/layers.png" alt="Drawing" width="20%" height="20%"/>
+
 ## The Sensing Node
 Technology: Arduino + ESP8266
 
