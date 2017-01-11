@@ -3,14 +3,14 @@ Urban Sensing Through Bus-Based Mobility
 
 This project is a bus-based sensing platform for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service. The whole schema is shown below: 
 
-<img src="img/layers.png" alt="System layers" width="20%" height="20%" align="middle"/>
+<img src="img/bus_distribution.png" alt="System layers" width="20%" height="20%" align="middle"/>
 
 It is abstracted in three layers: sensing, flushing, and publishing. These layers are mapped into the architecture of the current project.
 
 ## Architecture
 This project has three main components, as shown:
 
-<img src="img/bus_distribution.png" alt="System layers" width="20%" height="20%" align="middle"/>
+<img src="img/layers.png" alt="System layers" width="20%" height="20%" align="middle"/>
 
 The Sensing layer is responsible for gathering raw data from the city. It is composed by wireless sensor nodes embbeded onto urban buses of public transportation.
 
