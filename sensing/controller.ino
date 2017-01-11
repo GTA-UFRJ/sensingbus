@@ -23,7 +23,9 @@
 #include "TinyGPS++.h"
 #include "DHT.h"
 
-#define DEBUG true
+#define NODE_ID 1 //The network id of the present device
+
+#define DEBUG true // Set true to display debug messages on serial port
 #define SERIAL_BAUD_RATE 9600
 
 #define GPS_RX 2
@@ -38,8 +40,7 @@
 #define DHTPIN 7
 #define DHTTYPE DHT11
 
-//This is the network id of the present device
-#define NODE_ID 1
+
 
 #define request "?"
 #define clear_to_send ":"
@@ -49,7 +50,7 @@
 
 #define SEPARATOR ","
 
-#define DELAY_TIME 500
+#define DELAY_TIME 150
 
 #define PIN_LIGHT A1
 #define SD_CHIP_SELECT 10
@@ -59,12 +60,13 @@
 const char string_0[] PROGMEM = "log.txt";
 const char string_1[] PROGMEM = "node_id=";
 const char string_2[] PROGMEM = "&type=data";
-const char string_3[] PROGMEM = "&header=datetime,lat,lng,light,temperature,humidity,rain";
-const char string_4[] PROGMEM = "&load=";
+const char string_3[] PROGMEM = "&header=datetime,lat,lng,"; // This string is broken in 2 so the buffer is not very big
+const char string_4[] PROGMEM = "light,temperature,humidity,rain";
+const char string_5[] PROGMEM = "&load=";
 
 
 const char* const string_table[] PROGMEM = {string_0, string_1, string_2,
-                                            string_3, string_4
+                                            string_3, string_4, string_5
                                            };
 
 #if DEBUG
@@ -86,7 +88,7 @@ const char* const debug_table[] PROGMEM = {debug_0, debug_1, debug_2,
                                           };
 #endif
 
-char buffer[65];
+char buffer[40];
 
 //DateTime is in DDMMYYHHMMSSCC format
 TinyGPSPlus gps;
@@ -118,7 +120,6 @@ void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   wifiSerial.begin(WIFI_BAUD_RATE);
   gpsSerial.begin(GPS_BAUD_RATE);  // gps begins after wifi because it is used first
-  //dht.begin();
 
   pinMode(10, OUTPUT);
 
@@ -141,11 +142,7 @@ void setup() {
 #endif
 }
 
-void send_data() {
-#if DEBUG
-  print_debug(4);
-#endif
-
+void start_message() {
   //Create the message
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[1]))); //node_id=
   wifiSerial.print(String(buffer) + NODE_ID);
@@ -153,20 +150,43 @@ void send_data() {
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[2]))); //&type=data
   wifiSerial.print(buffer);
 
-  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[3]))); //&header=datetime,lat,lng,light,temperature,humidity,rain
+  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[3]))); //&header=datetime,lat,lng,
   wifiSerial.print(buffer);
 
-  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[4]))); //&load=
+  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[4]))); //light,temperature,humidity,rain
   wifiSerial.print(buffer);
+
+  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[5]))); //&load=
+  wifiSerial.print(buffer);
+}
+
+void send_data() {
+#if DEBUG
+  print_debug(4);
+#endif
 
   //Send the whole file
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
   File data_file = SD.open(buffer);
-  char a;
+  String a;
+  int i = 0;
+
   while (data_file.available()) {
-    a = char(data_file.read());
-    wifiSerial.write(a);
-    delay(5);
+    start_message();
+    while (data_file.available()) {
+      i++;
+      a = data_file.readStringUntil('\n');
+      wifiSerial.print(a + "\n");
+      delay(5);
+      if (i > 20) {
+        wifiSerial.write(end_of_file);
+        start_message();
+      }
+    }
+    delay(DELAY_TIME);
+    if (!start_connection()){
+      break;
+    }
   }
   wifiSerial.write(end_of_file);
   data_file.close();
@@ -179,39 +199,42 @@ void send_data() {
 #endif
 }
 
-void loop() {
+bool start_connection() {
+  // Check for connection
+  wifiSerial.listen();
+  wifiSerial.print(request);
+  int index = 0;
+  while (!wifiSerial.available() || !wifiSerial.isListening()) {
+#if DEBUG
+    print_debug(3);
+#endif
+    index++;
+    if (index > wifi_timeout)
+      break;
+    delay(DELAY_TIME);
+  }
 
+  String wifiIn("");
+  while (wifiSerial.available()) {
+    delay(DELAY_TIME);
+    wifiIn += String(char (wifiSerial.read()));
+  }
+  return (wifiIn == clear_to_send);
+}
+
+void loop() {
   iteration++;
   if (iteration % wifi_freq == 0) {
-
 #if DEBUG
     print_debug(2); //Asking for WiFi
 #endif
-
-    // Check for connection
-    wifiSerial.listen();
-    wifiSerial.print(request);
-    int index = 0;
-    while (!wifiSerial.available() || !wifiSerial.isListening()) {
-      Serial.println("Waiting WiFi");
-      index++;
-      if (index > wifi_timeout)
-        break;
-      delay(100);
-    }
-
-    String wifiIn("");
-    while (wifiSerial.available()) {
-      delay(100);
-      wifiIn += String(char (wifiSerial.read()));
-    }
-    if (wifiIn == clear_to_send) {
+    if (start_connection()) {
       send_data();
-#if DEBUG
+#if DEBUG  // An ugly way to make code smaller
       print_debug(5); //WiFi available
     } else {
       print_debug(8); //WiFi not available
-#endif      
+#endif
     }
   }
 
@@ -235,10 +258,9 @@ void loop() {
     print_debug(1); //GPS Found!
 #endif
 
-    String data_string = //String(iteration) + SEPARATOR +
-      String(gps.date.value()) + String(gps.time.value()) + SEPARATOR +
-      String(gps.location.lat(), 10) + SEPARATOR +
-      String(gps.location.lng(), 10) + SEPARATOR +
+    String data_string = String(gps.date.value()) + String(gps.time.value()) + SEPARATOR +
+      String(gps.location.lat(), 5) + SEPARATOR +
+      String(gps.location.lng(), 5) + SEPARATOR +
       String(analogRead(PIN_LIGHT)) + SEPARATOR +
       String(dht.readTemperature()) + SEPARATOR +
       String(dht.readHumidity()) + SEPARATOR +
