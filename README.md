@@ -29,7 +29,7 @@ There should be one node per bus.
 
 Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. To achieve that, this is the architecture of the Sensing Node:
 
-<img src="img/sensing_node.png" alt="System layers" width="20%" height="20%" align="middle"/>
+<img src="img/sensing_node.png" alt="System layers" width="50%" height="50%" align="middle"/>
 
 The devices used to implement each module are on teh following table:
 
