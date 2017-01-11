@@ -5,7 +5,8 @@ This project is a bus-based sensing platform for Smart Cities. It is abstracted 
 
 ## Architecture
 This project has three main components, as shown:
-<img src="img/layers.png" alt="System layers" width="20%" height="20%"/>
+
+<img src="img/layers.png" alt="System layers" width="20%" height="20%" align="middle"/>
 
 The Sensing layer is responsible for gathering raw data from the city. It is composed by wireless sensor nodes embbeded onto urban buses of public transportation.
 
