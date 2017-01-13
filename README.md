@@ -81,4 +81,4 @@ The publishing API offers the retrieval of measurements using filters. A user re
 - **min_lng**: Selects measurements with longitudes bigger than **min_lng**;
 - **max_lng**: Selects measurements with longitudes smaller than **max_lng**;
 
-
+An example url is www.your-website.com/data?bus_id=123&sensor_name=temperature
