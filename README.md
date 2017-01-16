@@ -28,6 +28,7 @@ There should be one node per bus.
 #### The Sensing Node
 
 Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. The Sensing Node follows an architecture presented [here](http://www.gta.ufrj.br/ftp/gta/TechReports/CPCC16.pdf) and ilustrated here:
+fog
 
 <img src="img/sensing_node.png" alt="System layers" width="50%" height="50%" align="middle"/>
 
