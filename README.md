@@ -67,7 +67,7 @@ The Publishing layer receives the data from Flushing layer and publishes the dat
 The Publishing layer is implemented as a single Publishing node, explained in the following session.
 
 #### The Publishing node
-The Publishing Node is a web service powered by [Django](https://www.djangoproject.com/) with [MongoDB](https://django-mongodb-engine.readthedocs.io/en/latest/index.html). The visualizing platform is implemented with [Bootstrap](http://getbootstrap.com/) and with [Google Maps API](https://developers.google.com/maps/). The Publishing Node runs on a cloud platform, described [here](http://www.gta.ufrj.br/ftp/gta/TechReports/CSB15.pdf).
+The Publishing Node is a web service powered by [Django](https://www.djangoproject.com/). The visualizing platform is implemented with [Bootstrap](http://getbootstrap.com/) and with [Google Maps API](https://developers.google.com/maps/). The Publishing Node runs on a cloud platform, described [here](http://www.gta.ufrj.br/ftp/gta/TechReports/CSB15.pdf).
 
 #### The Publishing API
 The publishing API offers the retrieval of measurements using filters. A user requests measurements with the HTTP GET method. The GET parameters are the filters applied to the data being queried. The possible filters are:
