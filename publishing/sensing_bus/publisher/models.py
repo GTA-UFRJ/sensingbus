@@ -1,29 +1,26 @@
+from __future__ import unicode_literals
 from django.db import models
-from djangotoolbox.fields import EmbeddedModelField
-
-class Location(models.Model):
-    """Represents a point in latitude and longitude"""
-    lat = models.DecimalField(max_digits=9, decimal_places=6)
-    lng = models.DecimalField(max_digits=9, decimal_places=6)
 
 class Bus(models.Model):
     """Represents a bus carrying a sensor node"""
-    name = models.CharField(max_length=10)
+    name = models.CharField(max_length=10, unique=True)
 
-class Stop(model.Model):
+class Stop(models.Model):
     """Represents a bus stop having a flushing node"""
-    location = EmbeddedModelField('Location')
-
-class Context(models.Model):
-    created_on = models.DateTimeField(auto_now_add=True)
-    bus = EmbeddedModelField('Bus')
-    time = models.DateTimeField()
-
+    lat = models.DecimalField(max_digits=9, decimal_places=6)
+    lng = models.DecimalField(max_digits=9, decimal_places=6)
 
 class Measurement(models.Model):
     """Represents the measurements made by a bus on a given time and place"""
-    context = EmbeddedModelField('Context')
+    #Context of measurements
+    created_on = models.DateTimeField(auto_now_add=True)
+    bus = models.ForeignKey(Bus, on_delete=models.CASCADE,
+             verbose_name="bus that collected measurement")
+    stop = models.ForeignKey(Stop, on_delete=models.CASCADE,
+             verbose_name="stop that received measurement")
+    time = models.DateTimeField()
 
+    #Measurements
     temperature = models.DecimalField(max_digits=4, decimal_places=1)
     humidity = models.DecimalField(max_digits=4, decimal_places=1)
     light = models.DecimalField(max_digits=4, decimal_places=1)
