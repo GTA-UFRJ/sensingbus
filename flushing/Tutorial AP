@@ -1,0 +1,124 @@
+Tutorial How to turn a Raspberry Pi into a Hotspot:
+
+Step 1) Install DHCP software, running the following line command:
+
+        sudo apt-get install isc-dhcp-server
+ 
+Step 2) Configure the DHCP Server:
+  2.1) Edit file /etc/dhcp/dhcpd.conf. Use your favorite text editor. This tutorial is going to use nano as text editor
+        
+        sudo nano /etc/dhcp/dhcpd.conf
+       
+       Find the word "authorative" then un-comment it
+       
+Step 3) At the same file, you must define the network that the DCHP will use it. Write the following lines:
+      
+       subnet 192.168.10.0 netmask 255.255.255.0 {
+        range 192.168.10.10 192.168.10.20;
+        option broadcast-address 192.168.10.255;
+        option routers 192.168.10.1;
+        default-lease-time 600;
+        max-lease-time 7200;
+        option domain-name "local-network";
+        option domain-name-servers 8.8.8.8, 8.8.4.4;
+
+       }
+
+Step 4) Edit file /etc/default/isc_dhcp-server. Use your favorite text editor. This tutorial is going to use nano as text editor.
+        Write the following line:
+         
+        INTERFACES="wlan0"
+        
+Step 5) You must turn down the interface wlan0. Use the command:
+      
+        sudo ifdown wlan0
+        
+Step 6) You must configure a static ip. Edit the file /etc/network/interfaces and add the following lines.
+        Change the file looks like that:
+        
+        auto lo
+        iface lo inet loopback
+        iface eth0 inet dhcp
+        allow-hotplug wlan0
+        iface wlan0 inet static
+          address 192.168.10.1
+          netmask 255.255.255.0
+          
+Step 7) Configure the HostAPD
+  Step 7.1) To configure it, edit the file /etc/hostapd/hostapd.conf
+              
+          sudo nano /etc/hostapd/hostapd.conf
+          
+  Step 7.2) Copy the following lines to file /etc/hostapd/hostapd.conf
+        interface=wlan0
+        driver=nl80211
+        ssid=sense
+        country_code=US
+        hw_mode=g
+        channel=6
+        macaddr_acl=0
+        auth_algs=1
+        ignore_broadcast_ssid=0
+        wpa=2
+        wpa_passphrase=S3ns1nG_bu5
+        wpa_key_mgmt=WPA-PSK
+        wpa_pairwise=CCMP
+        wpa_group_rekey=86400
+        ieee80211n=1
+        wme_enabled=1
+
+Step 8) Open the file /etc/sysctl.conf
+        Add in the file's last line:
+        
+        net.ipv4.ip_forward=1
+        
+Step 9) Running this line in the terminal:
+
+        sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+        
+Step 10) Up the interface:
+    
+        sudo ifup wlan0
+        
+Step 11) Copy the following commands at terminal:
+
+        
+        sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+        sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+        sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+        
+Step 12) Starting the WiFi Router:
+    
+        sudo service isc-dhcp-server start
+        
+        sudo service hostapd start
+
+Step 13) Reboot Raspberry Pi:
+
+         sudo reboot
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
