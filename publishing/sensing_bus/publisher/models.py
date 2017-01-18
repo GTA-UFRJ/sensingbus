@@ -21,7 +21,7 @@ class Measurement(models.Model):
     time = models.DateTimeField()
 
     #Measurements
-    temperature = models.DecimalField(max_digits=4, decimal_places=1)
-    humidity = models.DecimalField(max_digits=4, decimal_places=1)
-    light = models.DecimalField(max_digits=4, decimal_places=1)
-    rain = models.DecimalField(max_digits=4, decimal_places=1)
+    temperature = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    humidity = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    light = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    rain = models.DecimalField(max_digits=4, decimal_places=1, null=True)
