@@ -33,3 +33,7 @@ After that, the development can start as a regular Django project.
 ### Setting Apache server
 
 To set the Apache server, follow the instructions to setup a Django application as a wsgi application https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/
+
+### Project organization
+
+The project is named sensing_bus an has an app named publisher, responsible for the web pages. 
