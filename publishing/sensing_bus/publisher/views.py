@@ -3,11 +3,17 @@ from django.http import HttpResponse
 
 def index(request):
     context = {}
-    #return HttpResponse("This is SensingBus.")
     return render(request, 'publisher/index.html', context)
-    #return render(request, 'index.html', context)
 
-def detail(request, question_id):
+def about(request):
     context = {}
-    return render(request, 'base.html', context)
+    return render(request, 'publisher/about.html', context)
+
+def visualize(request):
+    context = {}
+    return render(request, 'publisher/visualize.html', context)
     #return render(request, 'publisher/index.html', context)
+
+def docs(request):
+    context = {}
+    return render(request, 'publisher/docs.html', context)
