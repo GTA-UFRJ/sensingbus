@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 
+from .forms import VisualizeForm
+
 def index(request):
     context = {}
     return render(request, 'publisher/index.html', context)
@@ -10,7 +12,8 @@ def about(request):
     return render(request, 'publisher/about.html', context)
 
 def visualize(request):
-    context = {}
+    form = VisualizeForm()
+    context = {'form': form}
     return render(request, 'publisher/visualize.html', context)
     #return render(request, 'publisher/index.html', context)
 

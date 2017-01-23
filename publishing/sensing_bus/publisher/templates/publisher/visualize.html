@@ -1,8 +1,14 @@
 {% extends "base.html" %}
 
+{% load static from staticfiles %}
 {% block title %}Beginning SensingBus Template{% endblock %}
 
 {% block content %}
+
+  <!-- Datetimepicker -->
+  <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}"/>
 
 <div class ="container" style="height:87%; width:100%">
   <div class="row" style="height:100%; width:100%;">
@@ -11,44 +17,62 @@
     <div class="col-md-4" id="welcome-pane">
       <div class="panel panel-primary">
         <!-- Default panel contents -->
-        <div class="panel-heading">Warnings</div>
-        <!-- div class="panel-body">
-          <p>...</p>
-        </div-->
+        <div class="panel-heading">Search Measurements</div>
+        <div class="panel-body">
+          <div class="form-group">
 
-        <!-- List group -->
-        <ul class="list-group">
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-cloud brown"></span> 
-            Presidente Vargas, 18
-          </li>
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-cloud brown"></span>
-            Francisco Bicalho, 403
-          </li>
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-tint text-info"></span>
-            Campo de Santana
-          </li>
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-wrench text-danger"></span>
-            Hadock Lobo, 276
-          </li>
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-flash text-warning"></span>
-            Presidente Vargas
-          </li>
-          <li class="list-group-item">
-            <span class="glyphicon glyphicon-flash text-warning"></span>
-            Largo do Estácio
-          </li>
-        </ul>
+            <form class="form-horizontal">
+              {{ form.non_field_errors }}
+              {% for field in form %}
+
+
+              <div class="form-group row">
+                <label for="{{field.id_for_label}}" class="control-label col-xs-4">{{field.label}}</label>
+                {% if not field.field.widget.attrs.type %}
+                <div class="col-xs-8 ">
+                  <input class="form-control" type="{{ field.field.widget.input_type }}" id="{{field.id_for_label}}" placeholder="{{field.initial}}">
+                </div>
+                {% else %}
+                  {% if field.field.widget.attrs.type == 'date' %}
+                <div class="col-xs-8 input-group date" id="{{field.id_for_label}}" style="padding-left: 15px; padding-right: 15px;">
+                  <input type="text" class="form-control" id="{{field.id_for_label}}" placeholder="{{field.initial}}"/>
+                  <span class="input-group-addon">
+                      <span class="glyphicon glyphicon-calendar"></span>
+                  </span>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        $('#{{field.id_for_label}}').datetimepicker();
+                    });
+                </script>
+                  {% endif %}
+                  {% if field.field.widget.attrs.type == 'radio' %}
+                <div class="col-xs-8">
+                    {% for option in field.field.choices %}
+                  <div class="radio">
+                    <label><input class="form-control" type="radio" name="{{field.id_for_label}}">{{option.1}}</label>
+                  </div>
+                    {% endfor %}
+
+                </div>
+
+
+                  {% endif %}
+                {% endif %}
+              </div>
+              {% endfor %}
+            </form>
+          </div>
+        </div>
       </div> <!-- End Panel -->
     </div>
   </div>
 </div>
 
+
+
 <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=visualization"></script>
+
 
 <script>
   var map, heatmap;
