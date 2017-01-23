@@ -1,0 +1,63 @@
+clear
+
+echo "Turn a Raspberry Pi into a WiFi Router"
+echo "========================================"
+echo "Viva la Revolucion"
+echo "========================================"
+
+echo "Updating packages"
+sudo apt-get -y update
+
+echo "Installing DHCP Servers"
+
+sudo apt-get install -y isc-dhcp-server
+
+if [-f /etc/dhcp/dhcpd.conf]
+then
+	cp /home/pacheco2904/AP_Raspberry/dhcpd.conf /etc/dhcp/dhcpd.conf
+fi
+
+if [-f /etc/default/isc-dhcp-server]
+then
+	cp /home/pacheco2904/AP_Raspberry/isc-dhcp-server /etc/default/isc-dhcp-server
+fi
+
+sudo ifdown wlan0
+
+if [-f /etc/network/interfaces]
+then
+	cp /home/pacheco2904/AP_Raspberry/interfaces /etc/network/interfaces
+fi
+
+if [-f /etc/hostapd/hostapd.conf]
+then
+	cp /home/pacheco2904/AP_Raspberry/hostapd.conf /etc/hostapd/hostapd.conf
+fi
+
+if [-f /etc/sysctl.conf]
+then
+	cp /home/pacheco2904/AP_Raspberry/sysctl.conf /etc/sysctl.conf
+fi
+
+sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"
+
+sudo ifup wlan0
+
+sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+sudo iptables -A FORWARD -i eth0 -o wlan0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
+
+sudo service isc-dhcp-server start
+sudo service hostapd start
+
+sudo reboot
+
+
+
+
+
+
+
+
+
+
