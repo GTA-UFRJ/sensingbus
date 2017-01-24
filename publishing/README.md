@@ -38,6 +38,10 @@ To set the Apache server, follow the instructions to setup a Django application 
 
 The project is named sensing_bus an has an app named publisher, responsible for the web pages.
 
+### Backend Anotation
+
+To write data on the server, the fog node must be authenticated through the API.
+
 ### Database
 There is a small database demo dump, located at http://gta.ufrj.br/~cruz/sensing_bus/
 
