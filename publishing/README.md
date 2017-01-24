@@ -36,4 +36,13 @@ To set the Apache server, follow the instructions to setup a Django application 
 
 ### Project organization
 
-The project is named sensing_bus an has an app named publisher, responsible for the web pages. 
+The project is named sensing_bus an has an app named publisher, responsible for the web pages.
+
+### Database
+There is a small database demo dump, located at http://gta.ufrj.br/~cruz/sensing_bus/
+
+To use it, save it into a file and run:
+
+```
+./manage.py loaddata <file_name>
+```
