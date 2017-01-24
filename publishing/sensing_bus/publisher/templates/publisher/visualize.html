@@ -8,20 +8,24 @@
   <!-- Datetimepicker -->
   <script type="text/javascript" src="{% static 'js/moment.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+
+  
+
   <link rel="stylesheet" href="{% static 'css/bootstrap-datetimepicker.min.css' %}"/>
 
 <div class ="container" style="height:87%; width:100%">
   <div class="row" style="height:100%; width:100%;">
-    <div class="col-md-8" id="map" style="height:500px; width:500px;">
+    <div class="col-md-9" id="map" style="height:500px; width:600px;">
     </div>
-    <div class="col-md-4" id="welcome-pane">
+    <div class="col-md-3" id="welcome-pane">
       <div class="panel panel-primary">
         <!-- Default panel contents -->
         <div class="panel-heading">Search Measurements</div>
         <div class="panel-body">
           <div class="form-group">
 
-            <form class="form-horizontal">
+            <form id="visualization-search" method="POST" class="form-horizontal">
+              {% csrf_token %}
               {{ form.non_field_errors }}
               {% for field in form %}
 
@@ -30,16 +34,17 @@
                 <label for="{{field.id_for_label}}" class="control-label col-xs-4">{{field.label}}</label>
                 {% if not field.field.widget.attrs.type %}
                 <div class="col-xs-8 ">
-                  <input class="form-control" type="{{ field.field.widget.input_type }}" id="{{field.id_for_label}}" placeholder="{{field.initial}}">
+                  <input class="form-control" type="{{ field.field.widget.input_type }}" id="{{field.id_for_label}}" name="{{field.id_for_label}}" placeholder="{{field.initial}}">
                 </div>
                 {% else %}
                   {% if field.field.widget.attrs.type == 'date' %}
                 <div class="col-xs-8 input-group date" id="{{field.id_for_label}}" style="padding-left: 15px; padding-right: 15px;">
-                  <input type="text" class="form-control" id="{{field.id_for_label}}" placeholder="{{field.initial}}"/>
+                  <input type="text" class="form-control" id="{{field.id_for_label}}" name="{{field.id_for_label}}" placeholder="{{field.initial}}"/>
                   <span class="input-group-addon">
                       <span class="glyphicon glyphicon-calendar"></span>
                   </span>
                 </div>
+                <!-- This script is here in order to be rendered by Django -->
                 <script type="text/javascript">
                     $(function () {
                         $('#{{field.id_for_label}}').datetimepicker();
@@ -47,20 +52,24 @@
                 </script>
                   {% endif %}
                   {% if field.field.widget.attrs.type == 'radio' %}
-                <div class="col-xs-8">
-                    {% for option in field.field.choices %}
-                  <div class="radio">
-                    <label><input class="form-control" type="radio" name="{{field.id_for_label}}">{{option.1}}</label>
+                <fieldset class="form-group">
+                  <div class="col-xs-8 form-check">
+                      {% for option in field.field.choices %}
+                    <div class="radio">
+                      <label class="form-check-label">
+                        <input class="form-control form-check-input" type="radio" name="{{field.id_for_label}}" id="{{option.0}}" value="{{option.0}}">{{option.1}}
+                      </label>
+                    </div>
+                      {% endfor %}
+
                   </div>
-                    {% endfor %}
-
-                </div>
-
-
+                </fieldset>
                   {% endif %}
                 {% endif %}
               </div>
               {% endfor %}
+
+              <button class="btn btn-primary" type="submit" id="search-button">Search</button>
             </form>
           </div>
         </div>
@@ -73,6 +82,7 @@
 
 <script src="http://maps.googleapis.com/maps/api/js?sensor=false&libraries=visualization"></script>
 
+<script type="text/javascript" src="{% static 'js/visualize.js' %}"></script>
 
 <script>
   var map, heatmap;
