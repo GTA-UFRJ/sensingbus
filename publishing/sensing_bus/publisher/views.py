@@ -27,7 +27,6 @@ def visualize(request):
     if request.method == 'GET':
         return render(request, 'publisher/visualize.html', context)
     if request.method == 'POST':
-        #print request.POST
         bus_name = request.POST.get("id_bus_name", "")
         min_lat = request.POST.get("id_min_lat", "")
         max_lat = request.POST.get("id_max_lat", "")
@@ -73,10 +72,6 @@ def visualize(request):
         data['max'] = 30
         now = datetime.datetime.now()
         html = "Data = %s" % data
-        #data = json.dumps(data, cls=DjangoJSONEncoder)
-        print data
-        #return HttpResponse(json.dumps(data, cls=DjangoJSONEncoder),
-                            #content_type="application/json")
         return JsonResponse(data)
 
     else:
