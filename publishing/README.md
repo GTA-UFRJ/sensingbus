@@ -43,10 +43,17 @@ The project is named sensing_bus an has an app named publisher, responsible for 
 To write data on the server, the fog node must be authenticated through the API.
 
 ### Database
+
+To generate the database dump, run:
+
+```
+python manage.py dumpdata -e contenttypes ><filename.json>/debug-e.json
+```
+
 There is a small database demo dump, located at http://gta.ufrj.br/~cruz/sensing_bus/
 
 To use it, save it into a file and run:
 
 ```
-./manage.py loaddata <file_name>
+./manage.py loaddata <file_name.json>
 ```
