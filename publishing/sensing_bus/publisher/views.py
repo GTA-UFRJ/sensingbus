@@ -5,7 +5,10 @@ from publisher.models import Measurement
 from publisher.models import Bus
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
-
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.renderers import JSONRenderer
+from rest_framework.parsers import JSONParser
+from publisher.serializers import MeasurementSerializer
 
 import datetime
 
@@ -86,3 +89,56 @@ def visualize(request):
 def docs(request):
     context = {}
     return render(request, 'publisher/docs.html', context)
+
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+@csrf_exempt
+def measurement_list(request):
+    """
+    List all code measurements, or create a new measurement.
+    """
+    if request.method == 'GET':
+        measurements = Measurement.objects.all()
+        serializer = MeasurementSerializer(measurements, many=True)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = MeasurementSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+
+@csrf_exempt
+def measurement_detail(request, pk):
+    """
+    Retrieve, update or delete a code measurement.
+    """
+    try:
+        measurement = Measurement.objects.get(pk=pk)
+    except Measurement.DoesNotExist:
+        return HttpResponse(status=404)
+
+    if request.method == 'GET':
+        serializer = MeasurementSerializer(measurement)
+        return JSONResponse(serializer.data)
+
+    elif request.method == 'PUT':
+        data = JSONParser().parse(request)
+        serializer = MeasurementSerializer(measurement, data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data)
+        return JSONResponse(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        measurement.delete()
+        return HttpResponse(status=204)
