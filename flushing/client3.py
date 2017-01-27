@@ -1,16 +1,30 @@
 def cloud_client(ip, port):
-	import requests
-	#import json
-	#import simplejson
-	from signal import signal, SIGPIPE, SIG_DFL
-	signal(SIGPIPE, SIG_DFL)
-	payload = {'key1': 'value1', 'key2': 'value2'}
-	headers = {'Content-Type': 'application/x-www-form-urlencoded', 
-			'Content-Length': str(len(payload))}
-	r = requests.post('http://%s:%d' %(ip, port), payload, headers=headers)
+    import requests
+    #import json
+    #import simplejson
+    from signal import signal, SIGPIPE, SIG_DFL
+    signal(SIGPIPE, SIG_DFL)
+    payload = {'node_id': '1', 'type': 'data',
+            'header' : 'datetime,lat,lng,light,temperature,humidity,rain',
+            'load' : '25081616493200,-22.865690,-43.223827,999,35.00,31.00,781\n \
+                25081616493300,-22.865690,-43.223831,999,35.00,31.00,777\n \
+                25081616493400,-22.865690,-43.223831,999,35.00,31.00,775\n \
+                25081616493500,-22.865690,-43.223831,998,35.00,31.00,779\n \
+                25081616493600,-22.865690,-43.223831,999,35.00,31.00,773\n \
+                25081616493700,-22.865690,-43.223831,999,35.00,31.00,784\n \
+                25081616493800,-22.865692,-43.223831,999,35.00,31.00,782\n \
+                25081616493900,-22.865692,-43.223835,999,35.00,31.00,787\n \
+                25081616494000,-22.865692,-43.223835,999,35.00,31.00,779\n \
+                25081616494100,-22.865694,-43.223831,999,35.00,31.00,778\n \
+                25081616494200,-22.865694,-43.223831,998,35.00,31.00,785\n \
+                25081616494300,-22.865694,-43.223835,999,35.00,30.00,780\n \
+                25081616494400,-22.865694,-43.223835,999,35.00,30.00,780'}
+    headers = {'Content-Type': 'application/x-www-form-urlencoded', 
+            'Content-Length': str(len(payload))}
+    r = requests.post('http://%s:%d' %(ip, port), data=payload, headers=headers)
 #print r.json()
 
 if __name__ == "__main__":
-	ip = '192.168.0.20'
-	port = 50000
-	cloud_client(ip, port)
+    ip = '192.168.0.20'
+    port = 50000
+    cloud_client(ip, port)
