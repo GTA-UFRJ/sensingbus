@@ -9,6 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from publisher.serializers import MeasurementSerializer
+from publisher.serializers import MeasurementBatchSerializer
 
 import datetime
 
@@ -130,10 +131,25 @@ def measurement_detail(request, pk):
         data = JSONParser().parse(request)
         serializer = MeasurementSerializer(measurement, data=data)
         if serializer.is_valid():
-            serializer.save()
+            #serializer.save()
             return JSONResponse(serializer.data)
         return JSONResponse(serializer.errors, status=400)
 
     elif request.method == 'DELETE':
         measurement.delete()
         return HttpResponse(status=204)
+
+@csrf_exempt
+def measurement_batch_list(request):
+    """
+    List all code measurements batches, or create a new measurement batch.
+    """
+    if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = MeasurementBatchSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+    else:
+        return JSONResponse({'msg':'This endpoint is just for POSTs, lek'},status=400)
