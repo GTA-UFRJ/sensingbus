@@ -52,8 +52,8 @@ def test_client(ip, port):
     r = requests.post('http://%s:%d' %(ip, port), data=payload, headers=headers)
 
 if __name__ == "__main__":
-    ip = '192.168.0.20'
+    ip = '146.164.69.186'
     port = 50000
-    cloud_client(ip, port)
+    test_client(ip, port)
 
 
