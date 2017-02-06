@@ -152,4 +152,4 @@ def measurement_batch_list(request):
             return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)
     else:
-        return JSONResponse({'msg':'This endpoint is just for POSTs, lek'},status=400)
+        return JSONResponse({'msg':'This endpoint is just for POSTs'},status=400)

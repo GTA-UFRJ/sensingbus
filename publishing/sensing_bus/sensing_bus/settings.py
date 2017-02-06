@@ -25,7 +25,7 @@ SECRET_KEY = '6^brrn2)0cluh5jj8rtw7yam_)rq5^w+1m%s*%m0e6^-uk2mnl'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [u'146.164.69.186',u'146.164.69.98']
+ALLOWED_HOSTS = [u'146.164.69.186',u'146.164.69.98', u'sensingbus.gta.ufrj.br']
 
 
 # Application definition
