@@ -11,7 +11,6 @@ class MeasurementSerializer (serializers.ModelSerializer):
         fields = ('created_on', 'bus', 'stop', 'time', 'lat', 'lng', 'temperature', 'humidity', 'light', 'rain')
 
 class MeasurementBatchSerializer (serializers.Serializer):
-    stop_id=serializers.IntegerField()
     node_id=serializers.IntegerField()
     received= serializers.DateTimeField(input_formats=['%d%m%y%H%M%S00'])
     header= serializers.CharField()
@@ -47,6 +46,9 @@ class MeasurementBatchSerializer (serializers.Serializer):
     def update(self, instance, validated_data):
         return instance
 
+class MeasurementBatchList (serializers.Serializer):
+    stop_id=serializers.IntegerField()
+    batch=ListField(child= MeasurementBatchSerializer())
 
 class DataSerializer(serializers.Serializer):
     data = serializers.ListField(child= MeasurementSerializer())
