@@ -16,39 +16,74 @@ class MeasurementBatchSerializer (serializers.Serializer):
     header= serializers.CharField()
     load=serializers.ListField(child= serializers.CharField())
     m_list = []
+    serialized_stop = 0
 
     def create(self, validated_data):
         column_names = validated_data["header"].split(",")
 
         b = Bus.objects.get(pk=validated_data["node_id"])
-        s = Stop.objects.get(pk=validated_data["stop_id"])
 
         for l in validated_data["load"]:
             data=l.split(",")
-            m = Measurement.objects.create(
-            stop = s,
-            bus = b,
-            time = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00'),
-            lat = data[column_names.index("lat")],
-            lng = data[column_names.index("lng")],
-            temperature = data[column_names.index("light")],
-            humidity = data[column_names.index("temperature")],
-            light = data[column_names.index("humidity")],
-            rain = data[column_names.index("rain")])
+            m = {}#Measurement.objects.create(
+            m['bus'] = b,
+            m['time'] = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00')
+            m['lat'] = data[column_names.index("lat")]
+            m['lng'] = data[column_names.index("lng")]
+            m['temperature'] = data[column_names.index("light")]
+            m['humidity'] = data[column_names.index("temperature")]
+            m['light'] = data[column_names.index("humidity")]
+            m['rain'] = data[column_names.index("rain")]
             self.m_list.append(m)
         return validated_data
     
     def save(self):
         for m in self.m_list:
-            m.save()
+            measurement = Measurement.objects.create(
+                stop = self.serialized_stop,
+                bus = m['bus'],
+                time = m['time'],
+                lat = m['lat'],
+                lng = m['lng'],
+                temperature = m['temperature'],
+                humidity = m['humidity'],
+                light = m['light'],
+                rain = m['rain'],
+            )
+            measurement.save()
         return
         
     def update(self, instance, validated_data):
         return instance
 
 class MeasurementBatchList (serializers.Serializer):
-    stop_id=serializers.IntegerField()
-    batch=ListField(child= MeasurementBatchSerializer())
+    stop_id = serializers.IntegerField()
+    batches = serializers.ListField(child=MeasurementBatchSerializer())
+    m_list = []
+
+    def create(self, validated_data):
+        s = Stop.objects.get(pk=validated_data["stop_id"])
+        for b in validated_data['batches']:
+            column_names = validated_data["header"].split(",")
+            b = Bus.objects.get(pk=validated_data["node_id"])
+            for l in validated_data["load"]:
+                data=l.split(",")
+                m = Measurement.objects.create(
+                bus = b,
+                time = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00'),
+                lat = data[column_names.index("lat")],
+                lng = data[column_names.index("lng")],
+                temperature = data[column_names.index("light")],
+                humidity = data[column_names.index("temperature")],
+                light = data[column_names.index("humidity")],
+                rain = data[column_names.index("rain")])
+                self.m_list.append(m)
+        return validated_data
+
+    def save(self):
+        for m in self.m_list:
+            m.save()
+
 
 class DataSerializer(serializers.Serializer):
-    data = serializers.ListField(child= MeasurementSerializer())
+    data = serializers.ListField(child=MeasurementSerializer())

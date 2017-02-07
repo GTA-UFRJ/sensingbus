@@ -9,7 +9,7 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from publisher.serializers import MeasurementSerializer
-from publisher.serializers import MeasurementBatchSerializer
+from publisher.serializers import MeasurementBatchList
 
 import datetime
 
@@ -146,10 +146,10 @@ def measurement_batch_list(request):
     """
     if request.method == 'POST':
         data = JSONParser().parse(request)
-        serializer = MeasurementBatchSerializer(data=data)
+        serializer = MeasurementBatchList(data=data)
         if serializer.is_valid():
             serializer.save()
             return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)
     else:
-        return JSONResponse({'msg':'This endpoint is just for POSTs'},status=400)
+        return JSONResponse({'msg':'This endpoint is just for fun'},status=400)
