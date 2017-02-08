@@ -9,17 +9,33 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 from signal import signal, SIGPIPE, SIG_DFL
 from urlparse import parse_qs
-
+from threading import Timer
+import json
+import requests
 signal(SIGPIPE, SIG_DFL)
-TASK_MANAGER_IP = '146.164.69.201'    
+TASK_MANAGER_IP = '146.164.69.201'
+json_vect = []
+TIME_CONFIG = 60
+cont = 0    
+def set_interval(function, interval, *params, **kwparams):
+	def set_timer(wrapper):
+		wrapper.timer = Timer(interval, wrapper)
+		wrapper.timer.start()
+	def wrapper():
+		function(*params, **kwparams)
+		set_timer(wrapper)
+	set_timer(wrapper)
+	return wrapper
+def clear_interval(wrapper):
+	wrapper.timer.cancel()
 
-def cloud_client(ip, port, payload):
+def cloud_client(payload):
     """ Sends mensage to Cloud"""
     import requests
 
     headers = {'Content-Type' : 'application/json', 
                 'Content-Length': str(len(payload))}
-    r = requests.post('http://%s:%d' %(ip, port), payload, headers=headers)
+    r = requests.post('http://sensingbus.gta.ufrj.br/measurements_batch_sec/', json.loads(payload), headers=headers)
 
 def send_to_arduino(mode, ip_host, port, msg):
     """ Sends a configutarion parameters to Arduino by Socket """
@@ -56,15 +72,25 @@ class S(BaseHTTPRequestHandler):
     
     def do_POST(self): 
         """Receives POST method"""
+	cont = 0
         postvars = parse_qs(
                 self.rfile.read(int(self.headers['Content-Length'])), 
                 keep_blank_values=1)
-        print postvars
-
+        #print postvars
+	#print json.dumps(postvars)
         self.send_response(200)
         self.end_headers()
         self.wfile.write("Ok")
-        cloud_client(TASK_MANAGER_IP, 8000, postvars)
+	json_vect.append(postvars)
+	json_input = '{"stop_id": 1, "batches": [%s ] }'%(json.dumps(json_vect))
+	print json.loads(json_input)
+        #set_interval(cloud_client(json_input), 60)
+	while (cont < TIME_CONFIG):
+			
+		cloud_client(json_input)	
+		time.sleep(1)
+		cont = cont + 1
+		
         return
 
 
