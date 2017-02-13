@@ -13,10 +13,12 @@ from threading import Timer
 import json
 import requests
 signal(SIGPIPE, SIG_DFL)
-TASK_MANAGER_IP = '146.164.69.201'
+MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec'
 json_vect = []
 TIME_CONFIG = 60
-cont = 0    
+cont = 0
+
+
 def set_interval(function, interval, *params, **kwparams):
 	def set_timer(wrapper):
 		wrapper.timer = Timer(interval, wrapper)
@@ -35,25 +37,10 @@ def cloud_client(payload):
 
     headers = {'Content-Type' : 'application/json', 
                 'Content-Length': str(len(payload))}
-    r = requests.post('http://sensingbus.gta.ufrj.br/measurements_batch_sec/', json.loads(payload), headers=headers)
-
-def send_to_arduino(mode, ip_host, port, msg):
-    """ Sends a configutarion parameters to Arduino by Socket """
-    import socket
-
-    if ( mode == 'SocketTCP'):
-        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        destination = (ip_host, port)
-        tcp.connect(destination)
-        tcp.send(msg)
-        tcp.close()
-    elif ( mode == 'SocketUDP'):
-        udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        destination = (ip_host, port)
-        udp.sendto(msg, destination)
-        udp.close()
-    else:
-        cloud_client(ip_host, port, msg)
+    r = requests.post('https://sensingbus.gta.ufrj.br/measurements_batch_sec/',
+                      json.loads(payload),
+                      headers=headers,
+                      verify="~/ca-chain.cert.pem")
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
@@ -92,22 +79,6 @@ class S(BaseHTTPRequestHandler):
 		cont = cont + 1
 		
         return
-
-
-        '''if (data['module_id'] == '0000'):
-            print 'nuvem'
-            module_id = data['id_arduino']
-        else:
-            print 'arduino'
-            print data['data'][0]['temperature']
-            ClientJson(self.ip, self.port, data)
-            temperature = data['data'][0]['temperature']
-            module_id = data['module_id']
-            if found:
-                print 'encontrado'
-            else:
-                print 'nao encontrado'
-            pass'''
     
 def run(server_class=HTTPServer, handler_class=S, port=50000):
     """ generates a server to receive POST method"""
