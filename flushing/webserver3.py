@@ -12,8 +12,10 @@ from urlparse import parse_qs
 from threading import Timer
 import json
 import requests
+
 signal(SIGPIPE, SIG_DFL)
 MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec'
+SERVER_CERTIFICATE='/home/pi/ssl/ca-chain.cert.pem'
 json_vect = []
 TIME_CONFIG = 60
 cont = 0
@@ -28,6 +30,7 @@ def set_interval(function, interval, *params, **kwparams):
 		set_timer(wrapper)
 	set_timer(wrapper)
 	return wrapper
+
 def clear_interval(wrapper):
 	wrapper.timer.cancel()
 
@@ -40,7 +43,7 @@ def cloud_client(payload):
     r = requests.post('https://sensingbus.gta.ufrj.br/measurements_batch_sec/',
                       json.loads(payload),
                       headers=headers,
-                      verify="~/ca-chain.cert.pem")
+                      verify=SERVER_CERTIFICATE)
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
@@ -59,6 +62,7 @@ class S(BaseHTTPRequestHandler):
     
     def do_POST(self): 
         """Receives POST method"""
+        print "POST"
 	cont = 0
         postvars = parse_qs(
                 self.rfile.read(int(self.headers['Content-Length'])), 
