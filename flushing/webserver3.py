@@ -23,17 +23,15 @@ SERVER_CERTIFICATE='/home/pi/ssl/ca-chain.cert.pem'
 #PRIMARY_KEY='/home/pi/ssl/raspberry1.key.pem'
 #LOCAL_CERTIFICATE='/home/pi/ssl/raspberry1.cert.pem'
 
-
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
-
     headers = {'Content-Type' : 'application/json', 
                 'Content-Length': str(len(payload))}
     r = requests.post(MEASUREMENTS_URL,
                     json.loads(payload),
                     headers=headers,
-                    verify=SERVER_CERTIFICATE,
-                    cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
+                    verify=SERVER_CERTIFICATE)#,
+                    #cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
     print r
 
 class S(BaseHTTPRequestHandler):
@@ -56,10 +54,10 @@ class S(BaseHTTPRequestHandler):
         postvars = parse_qs(
                 self.rfile.read(int(self.headers['Content-Length'])), 
                 keep_blank_values=1)
-        print "Originalmente: "
-        print postvars
-        print "Des-json: "
-        print json.dumps(postvars)
+        #print "Originalmente: "
+        #print postvars
+        #print "un-json: "
+        #print json.dumps(postvars)
         self.send_response(200)
         self.end_headers()
         self.wfile.write("Ok")
