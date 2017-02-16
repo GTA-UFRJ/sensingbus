@@ -17,20 +17,19 @@ import datetime
 signal(SIGPIPE, SIG_DFL)
 SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem'
 STOP_ID = 1
-SERVER_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/'
-
+MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/'
+# Variables for server-side validation:
+#MEASUREMENTS_URL = 'https://146.164.69.186/measurements_batch_sec/'
+#PRIMARY_KEY='/home/pi/ssl/raspberry1.key.pem'
+#LOCAL_CERTIFICATE='/home/pi/ssl/raspberry1.cert.pem'
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
-    print "cloud client"
-  
-    r = requests.post(SERVER_URL,
-                      json=payload,
-                      verify=SERVER_CERTS)
-    
-  
+    r = requests.post(MEASUREMENTS_URL,
+                    json=payload,
+                    verify=SERVER_CERTS)#,
+                    #cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
     print r
-
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
@@ -43,10 +42,10 @@ class S(BaseHTTPRequestHandler):
         self._set_headers()
         f = open("index.html", "r")
         self.wfile.write(f.read())
-    
+
     def do_HEAD(self):
         self._set_headers()
-    
+
     def do_POST(self): 
         """Receives POST method"""
 	output = {}
@@ -69,16 +68,13 @@ class S(BaseHTTPRequestHandler):
         #self.wfile.write("Ok")
 	
         return
-    
+
 def run(server_class=HTTPServer, handler_class=S, port=50000):
-    """ generates a server to receive POST method"""
+    """Generates a server to receive POST method"""
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print 'Iniciando Server Http'
-    httpd.serve_forever()    
+    httpd.serve_forever()
 
 if __name__ == "__main__":
     run()
-    
-    #cloud_client(TASK_MANAGER_IP, 8000, 'msg')
-

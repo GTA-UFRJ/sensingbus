@@ -130,7 +130,7 @@ def measurement_detail(request, pk):
     elif request.method == 'PUT':
         data = JSONParser().parse(request)
         serializer = MeasurementSerializer(measurement, data=data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             #serializer.save()
             return JSONResponse(serializer.data)
         return JSONResponse(serializer.errors, status=400)
@@ -148,6 +148,7 @@ def measurement_batch_list(request):
         data = JSONParser().parse(request)
         serializer = MeasurementBatchList(data=data)
         if serializer.is_valid():
+            print "Saving"
             serializer.save()
             return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)

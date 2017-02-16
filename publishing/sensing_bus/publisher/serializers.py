@@ -19,6 +19,7 @@ class MeasurementBatchSerializer (serializers.Serializer):
     serialized_stop = 0
 
     def create(self, validated_data):
+        print "Creating batch"
         column_names = validated_data["header"].split(",")
 
         b = Bus.objects.get(pk=validated_data["node_id"])
@@ -56,34 +57,33 @@ class MeasurementBatchSerializer (serializers.Serializer):
     def update(self, instance, validated_data):
         return instance
 
+
 class MeasurementBatchList (serializers.Serializer):
+    """This method receives data directly from the Raspberries"""
     stop_id = serializers.IntegerField()
     batches = serializers.ListField(child=MeasurementBatchSerializer())
-    m_list = []
 
     def create(self, validated_data):
         s = Stop.objects.get(pk=validated_data["stop_id"])
-        for b in validated_data['batches']:
-            column_names = validated_data["header"].split(",")
-            b = Bus.objects.get(pk=validated_data["node_id"])
-            for l in validated_data["load"]:
+        print validated_data
+        for batch in validated_data['batches']:
+            column_names = batch["header"].split(",")
+            b = Bus.objects.get(pk=batch["node_id"])
+            for l in batch["load"]:
                 data=l.split(",")
                 m = Measurement.objects.create(
                 bus = b,
-                time = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00'),
+                stop = s,
+                time = datetime.strptime(data[column_names.index("datetime")],
+                                        '%d%m%y%H%M%S00'),
                 lat = data[column_names.index("lat")],
                 lng = data[column_names.index("lng")],
                 temperature = data[column_names.index("light")],
                 humidity = data[column_names.index("temperature")],
                 light = data[column_names.index("humidity")],
                 rain = data[column_names.index("rain")])
-                self.m_list.append(m)
+                m.save()
         return validated_data
-
-    def save(self):
-        for m in self.m_list:
-            m.save()
-
 
 class DataSerializer(serializers.Serializer):
     data = serializers.ListField(child=MeasurementSerializer())
