@@ -18,9 +18,11 @@ import datetime
 import threading, Queue
 
 signal(SIGPIPE, SIG_DFL)
-SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem'
-STOP_ID = 1
-MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/'
+
+SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem' #To verify server
+STOP_ID = 1 #This raspberrie's id
+MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/' #Endpoint of insertion api
+
 # Variables for server-side validation:
 PRIMARY_KEY='/home/pi/ssl/raspberry.key.pem'
 LOCAL_CERTIFICATE='/home/pi/ssl/raspberry.cert.pem'
@@ -28,24 +30,19 @@ LOCAL_CERTIFICATE='/home/pi/ssl/raspberry.cert.pem'
 q = Queue.Queue()
 
 def send_thread(thread_name,q):
-	"""Sends periodically stored data"""
-	while True:
-		output = {}
-		output['stop_id'] = STOP_ID
-		output['batches'] = []
+    """Sends periodically stored data"""
+    while True:
+        output = {}
+        output['stop_id'] = STOP_ID
+        output['batches'] = []
 
-		while not q.empty():
-			b = q.get()
-			if ( b is not None):
-				output['batches'].append(b)
-		cloud_client(output)	
-		time.sleep(120)
+        while not q.empty():
+            b = q.get()
+            if ( b is not None):
+                output['batches'].append(b)
+        cloud_client(output)    
+        time.sleep(120)
 
-
-#Cruz: repara que essa variável payload é primeiro um dicionário (quando ela ainda é postvars, no do_POST);
-#depois ela é uma string json, quando você faz json.dumps pra criar o json_input; 
-# depois, ela entra no cloud_client e é transformada de novo em um dicionário, pra ir pro requests.post. 
-#Talvez tenha um jeito mais maneiro de fazer isso, usando ela como um dicionário direto =p
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
     r = requests.post(MEASUREMENTS_URL,
@@ -54,7 +51,6 @@ def cloud_client(payload):
                     cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
     print r
 
-# Repara também que as bibliotecas que você está usando fazem com que nenhum dos 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
         """Creates header HTTP requisition"""
@@ -64,26 +60,27 @@ class S(BaseHTTPRequestHandler):
 
     def do_POST(self): 
         """Receives data from Arduino and sends to Cloud"""
-	input_batches = {}
-        postvars = parse_qs(self.rfile.read(int(self.headers['Content-Length'])), keep_blank_values=1)
-	input_batches['node_id'] = postvars['node_id'][0]
-	for line in postvars['load']:
-		tmp = line.split('\n')
+    input_batches = {}
+    postvars = parse_qs(self.rfile.read(int(self.headers['Content-Length'])),
+                                            keep_blank_values=1)
+    input_batches['node_id'] = postvars['node_id'][0]
+    for line in postvars['load']:
+        tmp = line.split('\n')
 
-	#delete data defective date
-	print 'received post'
-	delete_list = []
-	for i in range(len(tmp)):
-		if (tmp[i][0:-1] == 0):
-			delete_list.append(i)
-	for i in reversed(delete_list):
-		del tmp[i]
-				
-	input_batches['type'] = str(postvars['type'][0])
-	input_batches['header'] = str(postvars['header'][0])
-	input_batches['received'] = str(datetime.datetime.now())
-	input_batches['load'] = tmp[0:-1] #the last line is always empty 
-	q.put(input_batches)
+    #delete data with defective date
+    print 'received post'
+    delete_list = []
+    for i in range(len(tmp)):
+        if (tmp[i][0:-1] == 0):
+            delete_list.append(i)
+    for i in reversed(delete_list):
+        del tmp[i]
+                
+    input_batches['type'] = str(postvars['type'][0])
+    input_batches['header'] = str(postvars['header'][0])
+    input_batches['received'] = str(datetime.datetime.now())
+    input_batches['load'] = tmp[0:-1] #the last line is always empty 
+    q.put(input_batches)
     return
 
 def run(server_class=HTTPServer, handler_class=S, port=50000):
@@ -96,5 +93,6 @@ def run(server_class=HTTPServer, handler_class=S, port=50000):
     t.start()
     httpd.serve_forever()
     t.join()
+
 if __name__ == "__main__":
     run()
