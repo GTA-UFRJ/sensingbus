@@ -1,4 +1,4 @@
-#Auhor: Roberto Goncalves Pacheco
+#Author: Roberto Goncalves Pacheco
 #Universidade do Estado do Rio de Janeiro
 #Departamento de Eletronica e Telecomunicacoes
 #Project: Sensing Bus
@@ -9,51 +9,28 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 from signal import signal, SIGPIPE, SIG_DFL
 from urlparse import parse_qs
-from threading import Timer
 import json
 import requests
+import time
+import datetime
+
 signal(SIGPIPE, SIG_DFL)
-TASK_MANAGER_IP = '146.164.69.201'
-json_vect = []
-TIME_CONFIG = 60
-cont = 0    
-def set_interval(function, interval, *params, **kwparams):
-	def set_timer(wrapper):
-		wrapper.timer = Timer(interval, wrapper)
-		wrapper.timer.start()
-	def wrapper():
-		function(*params, **kwparams)
-		set_timer(wrapper)
-	set_timer(wrapper)
-	return wrapper
-def clear_interval(wrapper):
-	wrapper.timer.cancel()
+SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem'
+STOP_ID = 1
+SERVER_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/'
+
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
-    import requests
+    print "cloud client"
+  
+    r = requests.post(SERVER_URL,
+                      json=payload,
+                      verify=SERVER_CERTS)
+    
+  
+    print r
 
-    headers = {'Content-Type' : 'application/json', 
-                'Content-Length': str(len(payload))}
-    r = requests.post('http://sensingbus.gta.ufrj.br/measurements_batch_sec/', json.loads(payload), headers=headers)
-
-def send_to_arduino(mode, ip_host, port, msg):
-    """ Sends a configutarion parameters to Arduino by Socket """
-    import socket
-
-    if ( mode == 'SocketTCP'):
-        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        destination = (ip_host, port)
-        tcp.connect(destination)
-        tcp.send(msg)
-        tcp.close()
-    elif ( mode == 'SocketUDP'):
-        udp = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        destination = (ip_host, port)
-        udp.sendto(msg, destination)
-        udp.close()
-    else:
-        cloud_client(ip_host, port, msg)
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
@@ -72,42 +49,26 @@ class S(BaseHTTPRequestHandler):
     
     def do_POST(self): 
         """Receives POST method"""
-	cont = 0
-        postvars = parse_qs(
-                self.rfile.read(int(self.headers['Content-Length'])), 
-                keep_blank_values=1)
-        #print postvars
-	#print json.dumps(postvars)
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write("Ok")
-	json_vect.append(postvars)
-	json_input = '{"stop_id": 1, "batches": [%s ] }'%(json.dumps(json_vect))
-	print json.loads(json_input)
-        #set_interval(cloud_client(json_input), 60)
-	while (cont < TIME_CONFIG):
-			
-		cloud_client(json_input)	
-		time.sleep(1)
-		cont = cont + 1
-		
+	output = {}
+	input_batches = {}
+	output['stop_id'] = STOP_ID
+	output['batches'] = []
+        postvars = parse_qs(self.rfile.read(int(self.headers['Content-Length'])), keep_blank_values=1)
+	input_batches['node_id'] = postvars['node_id'][0]
+	for line in postvars['load']:
+		tmp = line.split('\n')
+	input_batches['type'] = str(postvars['type'][0])
+	input_batches['header'] = str(postvars['header'][0])
+	input_batches['received'] = str(datetime.datetime.now())
+	input_batches['load'] = tmp[0:-1] #the last line is always empty 
+	output['batches'].append(input_batches)
+	print output
+	cloud_client(output)
+        #self.send_response(200)
+        #self.end_headers()
+        #self.wfile.write("Ok")
+	
         return
-
-
-        '''if (data['module_id'] == '0000'):
-            print 'nuvem'
-            module_id = data['id_arduino']
-        else:
-            print 'arduino'
-            print data['data'][0]['temperature']
-            ClientJson(self.ip, self.port, data)
-            temperature = data['data'][0]['temperature']
-            module_id = data['module_id']
-            if found:
-                print 'encontrado'
-            else:
-                print 'nao encontrado'
-            pass'''
     
 def run(server_class=HTTPServer, handler_class=S, port=50000):
     """ generates a server to receive POST method"""
