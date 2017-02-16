@@ -20,15 +20,15 @@ STOP_ID = 1
 MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/'
 # Variables for server-side validation:
 #MEASUREMENTS_URL = 'https://146.164.69.186/measurements_batch_sec/'
-#PRIMARY_KEY='/home/pi/ssl/raspberry1.key.pem'
-#LOCAL_CERTIFICATE='/home/pi/ssl/raspberry1.cert.pem'
+PRIMARY_KEY='/home/pi/ssl/raspberry.key.pem'
+LOCAL_CERTIFICATE='/home/pi/ssl/raspberry.cert.pem'
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
     r = requests.post(MEASUREMENTS_URL,
                     json=payload,
-                    verify=SERVER_CERTS)#,
-                    #cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
+                    verify=SERVER_CERTS,
+                    cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
     print r
 
 class S(BaseHTTPRequestHandler):
