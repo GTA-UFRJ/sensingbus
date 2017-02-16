@@ -37,17 +37,9 @@ class S(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
-    def do_GET(self):
-        """ Handles GET method"""
-        self._set_headers()
-        f = open("index.html", "r")
-        self.wfile.write(f.read())
-
-    def do_HEAD(self):
-        self._set_headers()
 
     def do_POST(self): 
-        """Receives POST method"""
+        """Receives data from Arduino and sends to Cloud"""
 	output = {}
 	input_batches = {}
 	output['stop_id'] = STOP_ID
@@ -56,17 +48,22 @@ class S(BaseHTTPRequestHandler):
 	input_batches['node_id'] = postvars['node_id'][0]
 	for line in postvars['load']:
 		tmp = line.split('\n')
+
+	#delete data defective date
+	delete_list = []
+	for i in range(len(tmp)):
+		if (tmp[i][0:-1] == 0):
+			delete_list.append(i)
+	for i in reversed(delete_list):
+		del tmp[i]
+				
 	input_batches['type'] = str(postvars['type'][0])
 	input_batches['header'] = str(postvars['header'][0])
 	input_batches['received'] = str(datetime.datetime.now())
 	input_batches['load'] = tmp[0:-1] #the last line is always empty 
 	output['batches'].append(input_batches)
 	print output
-	cloud_client(output)
-        #self.send_response(200)
-        #self.end_headers()
-        #self.wfile.write("Ok")
-	
+	cloud_client(output)	
         return
 
 def run(server_class=HTTPServer, handler_class=S, port=50000):
