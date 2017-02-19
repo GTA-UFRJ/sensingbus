@@ -186,7 +186,7 @@ Step 1) Run the command
 		
 		sudo reboot
 		
-### Test the connection:
+### Test the WiFi connection:
 
 
 
