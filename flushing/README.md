@@ -8,11 +8,31 @@ You will need some equipment to build a Flusher Node:
 * A WIFI adapter;
 * SD Card;
 * SD Card Reader.
+## Preparation:
+Step 1) You must download some Operatig System. In this tutorial, Raspdian was chosen as OS. You must download it in the following link. 
 
+		https://www.raspberrypi.org/downloads/raspbian/
+		
+Step 2) Boot the OS into SD Card. Run the following command:
 
-How to turn a Raspberry Pi into a WiFi Router:
+		sudo gzip -dc /home/your_username/image.gz | dd bs=4M of=/dev/sdb
+		
+Step 3) Connect the Ethernet Cable on Raspberry:
 
-This Tutorial followed this link's one: http://raspberrypihq.com/how-to-turn-a-raspberry-pi-into-a-wifi-router/
+Step 4) Check the Internet connection. Run the command.
+
+		ping 8.8.8.8
+		
+Step 5) Set up WiFi dongle:
+	Connect WiFi dongle and restart Raspberry Pi, running the command
+		
+		sudo reboot
+	Now, you can see wlan0 interface after you run the following:
+	
+		ifconfig -a
+		
+## Turn Raspberry Pi into a Hotspot:
+	###Install the softwares:
 
 Step 1) Install the DHCP Server Software:
 
