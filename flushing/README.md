@@ -24,15 +24,17 @@ Step 4) Check the Internet connection. Run the command.
 		ping 8.8.8.8
 		
 Step 5) Set up WiFi dongle:
-	Connect WiFi dongle and restart Raspberry Pi, running the command
+Connect WiFi dongle and restart Raspberry Pi, running the command
 		
 		sudo reboot
-	Now, you can see wlan0 interface after you run the following:
+	
+	
+Now, you can see wlan0 interface after you run the following:
 	
 		ifconfig -a
 		
 ## Turn Raspberry Pi into a Hotspot:
-	###Install the softwares:
+### Install the softwares:
 
 Step 1) Install the DHCP Server Software:
 
