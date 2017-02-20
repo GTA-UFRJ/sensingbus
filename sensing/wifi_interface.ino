@@ -3,7 +3,7 @@
 #define DIGITAL_OUT 2
 const char* ssid     = "sense";
 const char* password = "S3ns1nG_bu5";
-const char* host = "146.164.69.186";
+const char* host = "192.168.0.1";
 const int httpPort = 50000;
 const char* skpln = "\r\n";
 const String request = "?";
@@ -61,7 +61,7 @@ void loop() {
             }
           }
         }
-        Serial.print(dataString);
+        //Serial.print(dataString);
         if (dataString.length() > 0) {
           // This will send the request to the server
           client.print(String("POST ") + url + " HTTP/1.1" + skpln +

@@ -11,8 +11,8 @@
 //Chuva  marrom claro      D6
 //Vazio  verde escuro       -
 //Temp    verde claro      D7
-//CL      azul escuro     SCL
-//DA       azul claro     SDA
+//CL      azul escuro     SCL  //Tx wifi  D5
+//DA       azul claro     SDA  //Rx wifi  D4
 //Vcc         laranja     Vcc
 //Luz          branco      A3
 
@@ -25,7 +25,7 @@
 
 #define NODE_ID 1 //The network id of the present device
 
-#define DEBUG true // Set true to display debug messages on serial port
+#define DEBUG true // Set true if 
 #define SERIAL_BAUD_RATE 9600
 
 #define GPS_RX 2
@@ -52,9 +52,9 @@
 
 #define DELAY_TIME 150
 
-#define PIN_LIGHT A1
+#define PIN_LIGHT A3
 #define SD_CHIP_SELECT 10
-#define PIN_RAIN 3
+#define PIN_RAIN A1
 
 
 const char string_0[] PROGMEM = "log.txt";
@@ -123,7 +123,7 @@ void setup() {
 
   pinMode(10, OUTPUT);
 
-  start_file();
+  //tal -start_file();
   delay(DELAY_TIME);
 
 #if DEBUG
