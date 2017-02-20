@@ -49,6 +49,8 @@ sudo iptables -A FORWARD -i wlan0 -o eth0 -j ACCEPT
 
 sudo service isc-dhcp-server start
 sudo service hostapd start
+sudo update-rc.d hostapd enable
+sudo update-rc.d isc-dhcp-server enable
 
 sudo reboot
 
