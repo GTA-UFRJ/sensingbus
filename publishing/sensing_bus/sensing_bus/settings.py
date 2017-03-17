@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_docs',
 ]
 
 MIDDLEWARE = [
@@ -75,14 +76,23 @@ WSGI_APPLICATION = 'sensing_bus.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#        'NAME':"/home/ubuntu/db/db.sqlite3"
+#    }
+#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        'NAME':"/home/ubuntu/SBRC_ferramentas/sensing_bus/publishing/sensing_bus/db.sqlite3"
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sensingbus',
+        'USER': 'sensingbususer',
+        'PASSWORD': 'p4ssw0rd',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
@@ -108,6 +118,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ]
+}
+
+REST_FRAMEWORK_DOCS = {
+    'HIDE_DOCS': os.environ.get('HIDE_DRFDOCS', False)
 }
 
 # Internationalization
