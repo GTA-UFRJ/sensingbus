@@ -23,6 +23,10 @@ def about(request):
     context = {}
     return render(request, 'publisher/about.html', context)
 
+def docs(request):
+    context = {}
+    return render(request, 'publisher/docs.html', context)
+
 def visualize(request):
     """Renders the visualization webpage on GET and returns map data on POST"""
     form = VisualizeForm()
@@ -81,10 +85,6 @@ def visualize(request):
     else:
         html = "<html><body>This is not nice, lek</body></html>"
         return HttpResponse(html)
-
-def docs(request):
-    context = {}
-    return render(request, 'publisher/docs.html', context)
 
 class JSONResponse(HttpResponse):
     """
