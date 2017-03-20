@@ -12,7 +12,7 @@ class MeasurementSerializer (serializers.ModelSerializer):
 
 class MeasurementBatchSerializer (serializers.Serializer):
     node_id=serializers.IntegerField()
-    received= serializers.DateTimeField(input_formats=['%d%m%y%H%M%S00'])
+    received= serializers.DateTimeField()#input_formats=['%d%m%y%H%M%S00'])
     header= serializers.CharField()
     load=serializers.ListField(child= serializers.CharField())
     m_list = []
