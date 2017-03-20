@@ -89,7 +89,7 @@ DATABASES = {
         'NAME': 'sensingbus',
         'USER': 'sensingbususer',
         'PASSWORD': 'p4ssw0rd',
-        'HOST': 'localhost',
+       'HOST': 'localhost',
         'PORT': '',
     }
 }
