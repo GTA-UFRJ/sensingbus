@@ -98,7 +98,11 @@ class JSONResponse(HttpResponse):
 @csrf_exempt
 def measurement_list(request):
     """
-    List all code measurements, or create a new measurement.
+    get:
+    List all code measurements
+
+    post:
+    create a new measurement
     """
     if request.method == 'GET':
         measurements = Measurement.objects.all()
