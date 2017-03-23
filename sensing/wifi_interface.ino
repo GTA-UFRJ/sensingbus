@@ -1,6 +1,7 @@
 #include <ESP8266WiFi.h>
 
-#define DIGITAL_OUT 2
+PROGMEM const char post_line[] = "POST 192.168.0.1 HTTP/1.1 \nHost: 192.168.0.1 \nConnection: close \nContent-Type: application/x-www-form-urlencoded \nContent-Length:";
+
 const char* ssid     = "sense";
 const char* password = "S3ns1nG_bu5";
 const char* host = "192.168.0.1";
@@ -13,7 +14,7 @@ const String end_of_file = "#";
 String url = "/";
 
 void setup() {
-  Serial.begin(57600);
+  Serial.begin(38400);
   pinMode(2, OUTPUT);
 
   // We start by connecting to a WiFi network
@@ -41,49 +42,31 @@ void loop() {
     a = Serial.read();
     if (String(a) == request) {
       if (connected) {
-        Serial.write(clear_to_send);
-
-        while (!Serial.available()) {}
-        // Receive data from serial
+        delay(50); // Delay problem
         String temp = "";
         String dataString = "";
+        Serial.write(clear_to_send);
+        while (!Serial.available()) {}
+        // Receive data from serial
         while (true) {
           if (Serial.available()) {
             temp = String(char(Serial.read()));
             if (temp == request) {
               Serial.write(clear_to_send);
-              continue;
             }
-            if (temp != end_of_file) {
-              dataString += temp;
-            } else {
+            if (temp == end_of_file) {
               break;
             }
+            dataString += temp;
           }
         }
-        //Serial.print(dataString);
         if (dataString.length() > 0) {
           // This will send the request to the server
-          client.print(String("POST ") + url + " HTTP/1.1" + skpln +
-                       "Host: " + host + skpln +
-                       "Connection: close" + skpln +
-                       "Content-Type: application/x-www-form-urlencoded" + skpln +
-                       "Content-Length:" + dataString.length() + skpln + skpln +
-                       dataString);
-          //Serial.println(dataString);
+          client.print(String(FPSTR(post_line)) + dataString.length() + "\n\n" + dataString);
         }
       } else {
         Serial.write(wait_to_send);
       }
     }
   }
-
-  // Read all the lines of the reply from server and print them to Serial
-  /*while(client.available()){
-    String line = client.readStringUntil('\r');
-    Serial.print(line);
-    }
-
-    Serial.println();
-    Serial.println("closing connection");*/
 }
