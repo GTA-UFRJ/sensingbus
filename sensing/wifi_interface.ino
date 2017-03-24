@@ -1,7 +1,9 @@
 #include <ESP8266WiFi.h>
 
-PROGMEM const char post_line[] = "POST 192.168.0.1 HTTP/1.1 \nHost: 192.168.0.1 \nConnection: close \nContent-Type: application/x-www-form-urlencoded \nContent-Length:";
-
+PROGMEM const char post_line[] = "POST 192.168.0.1 HTTP/1.1 \nHost: 192.168.0.1 \nConnection: keep-alive \nContent-Type: application/x-www-form-urlencoded \nContent-Length:";
+                                 
+                                 //+ dataString.length() + skpln + skpln + dataString);
+                       
 const char* ssid     = "sense";
 const char* password = "S3ns1nG_bu5";
 const char* host = "192.168.0.1";
