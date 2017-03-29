@@ -39,7 +39,7 @@ def send_thread(thread_name,q):
                 if ( b is not None):
                     output['batches'].append(b)
             cloud_client(output)    
-        time.sleep(30)
+       time.sleep(30)
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
