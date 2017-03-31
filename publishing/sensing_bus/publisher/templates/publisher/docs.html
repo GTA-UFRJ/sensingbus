@@ -3,9 +3,73 @@
 {% block title %}Beginning SensingBus Template{% endblock %}
 
 {% block content %}
-<div class="col-md-8" id="welcome-pane">
+<div class="row">
+  <div class="col-md-8" id="welcome-pane">
   <h2>Welcome to SensingBus</h2>
-  <p>This is SensingBus project.</p>
+  <p>This is SensingBus project, my friends.</p>
+  </div>
 </div>
 
+<!--link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet"-->
+<div class="row">
+  <div class="col-md-2"></div>
+  <div class="col-md-8">
+    <div class="fancy-collapse-panel">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+              <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">/visualize/
+              </a>
+            </h4>
+          </div>
+          <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+              <h5>GET:</h5>
+              <b>Parameters</b>
+              <ul>
+                <li><b>id_bus_name</b> <p>Defines a filter based on the name of the bus</p></li>
+                <li><b>id_min_lat</b> <p>Defines a filter based on a minimum latitude</p></li>
+                <li><b>id_max_lat</b> <p>Defines a filter based on a maximum latitude</p></li>
+                <li><b>id_min_lng</b> <p>Defines a filter based on a minimum longitude</p></li>
+                <li><b>id_max_lng</b> <p>Defines a filter based on a maximum longitude</p></li>
+                <li><b>id_start_time</b> <p>Defines a filter based on a start time</p></li>
+                <li><b>id_end_time</b> <p>Defines a filter based on an end time</p></li>
+                <li><b>id_sensor_name_0</b> <p>Defines a filter based on the type of the sensor</p></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+              <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">/measurements/
+              </a>
+            </h4>
+          </div>
+          <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+            </div>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+              <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">/measurements_batch/
+              </a>
+            </h4>
+          </div>
+          <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CONATINER END -->
 {% endblock %}
