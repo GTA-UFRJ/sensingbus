@@ -190,20 +190,19 @@ Step 1) Run the command
 		
 ### Test the WiFi connection:
 
-### Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus. Run it.
+### Running flusher script:
+Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus. Run it.
 
-### Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
+Step 2) Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
 
-### Run the script
+Step 3) Run the script
 
 ## There is other way to create a flusher node:
 
-### Download the SensingBusOS image in the following link: 
+Step 1) Download the SensingBusOS image in the following link: 
 
-### Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
-### Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
-
-### Run the script.
+Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
+Step 3) Follow the instructions of section "Running flusher script".
 
 
 
