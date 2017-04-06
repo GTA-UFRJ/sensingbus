@@ -1,14 +1,16 @@
 # SensingBus Flushing Node
 This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
-## Required Equipments:
+## Installation Guide
+
+### Required Equipments:
 Equipment needed to build a flusher node:
 * Raspberry Pi;
 * Ethernet Cable;
 * A WIFI adapter;
 * SD Card;
 * SD Card Reader.
-## Preparation:
+### Preparation:
 Step 1) Download some Operatig System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
@@ -183,6 +185,7 @@ Step 2) Make it so it runs every time on boot:
 
 		sudo update-rc.d hostapd enable
 		sudo update-rc.d isc-dhcp-server enable
+		
 ### Reboot Raspberry Pi/etc/hotsapd/hostapd.conf
 Step 1) Run the command 
 		
@@ -191,17 +194,19 @@ Step 1) Run the command
 ### Test the WiFi connection:
 
 ### Running flusher script:
-Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus. Run it.
+Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus.
 
 Step 2) Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
 
 Step 3) Run the script
 
-## There is other way to create a flusher node:
+## Installation Guide:
 
-Step 1) Download the SensingBusOS image in the following link: 
+Step 1) Download the SensingBusOS image in the following link: https://www.dropbox.com/s/557oetnzkeg8mpv/SensingBusOS.gz?dl=0
 
 Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
+
+### Generate a key and certificate:
 
 Step 3) Follow the instructions of section "Running flusher script".
 
