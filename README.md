@@ -1,7 +1,7 @@
 # Sensing_bus
 Urban Sensing Through Bus-Based Mobility
 fog
-This project is a bus-based sensing platform for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service. The whole schema is shown below: 
+This project is a bus-based sensing system for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service. The whole schema is shown below: 
 
 <img src="img/bus_distribution.png" alt="System layers" width="60%" height="60%"/>
 
@@ -98,3 +98,6 @@ An example url is www.your-website.com/data?bus_id=123&sensor_name=temperature
 
 ### User's Manual
 To use the visualization tool, the user just needs access the url: https://sensingbus.gta.ufrj.br/visualize/. The user can select a filter and see this measures at the map.
+
+### Instalation Manual
+To install the system, follow the instructions on the README.md located at every layer directory.
