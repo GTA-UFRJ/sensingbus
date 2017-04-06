@@ -202,6 +202,7 @@ Step 3) Run the script
 Step 1) Download the SensingBusOS image in the following link: 
 
 Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
+
 Step 3) Follow the instructions of section "Running flusher script".
 
 
