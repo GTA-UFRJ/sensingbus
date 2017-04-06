@@ -1,16 +1,16 @@
-//Code: GPS Logger
-//Changes : PEDROCRUZ
+/**
+*Author: Pedro Henrique Cruz Caminha
+*Universidade Federal do Rio de Janeiro
+*Departamento de Engenharia Eletrica
+*Project: Sensing Bus
+*Subject: Throughput tests with an arduino
+*********************************
+To be flashed on an Arduino.
 
-//Função          COR Arduino
-//GND   marrom escuro     GND
-//Chuva  marrom claro      D6
-//Vazio  verde escuro       -
-//Temp    verde claro      D7
-//CL      azul escuro     SCL  //Tx wifi  D5
-//DA       azul claro     SDA  //Rx wifi  D4
-//Vcc         laranja     Vcc
-//Luz          branco      A3
+This software creates a file on the SD card. After, it reads the memmory card and asks the ESP8266 to send it.
 
+The ESP8266 must be flashed with sensing/wifi-interface.ino.
+*/
 #include <avr/pgmspace.h>
 #include <SoftwareSerial.h>
 #include <SD.h>
@@ -20,9 +20,6 @@
 #define DEBUG false // Set true if 
 #define SERIAL_BAUD_RATE 9600
 
-#define GPS_RX 2
-#define GPS_TX 3
-#define GPS_BAUD_RATE 9600
 
 #define WIFI_TX 4
 #define WIFI_RX 5
@@ -125,9 +122,6 @@ bool start_connection() {
   wifiSerial.print(request);
   int index = 0;
   while (!wifiSerial.available()) {
-#if DEBUG
-    print_debug(3);
-#endif
     index++;
     if (index > wifi_timeout)
       break;

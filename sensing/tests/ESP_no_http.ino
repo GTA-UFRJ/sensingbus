@@ -3,16 +3,15 @@
 *Universidade Federal do Rio de Janeiro
 *Departamento de Engenharia Eletrica
 *Project: Sensing Bus
-*Subject: The sensing layer wifi module
+*Subject: Throughput tests with an ESP8266
 *********************************
 To be flashed to an ESP8266.
 
-This software receives data from the Controller and sends it over to the Flushing layer.
+This software sends data to a flushing node.
 
+The Controller must be flashed with sensing/tests/throughput_with_HTTP.ino.
 */
 #include <ESP8266WiFi.h>
-
-PROGMEM const char post_line[] = "POST 192.168.0.1 HTTP/1.1 \nHost: 192.168.0.1 \nConnection: close \nContent-Type: application/x-www-form-urlencoded \nContent-Length:";
 
 const char* ssid     = "<ssid>";  //replace with the ssid of the network
 const char* password = "<password>";  //replace this with the password of the network
@@ -74,7 +73,7 @@ void loop() {
         }
         if (dataString.length() > 0) {
           // This will send the request to the server
-          client.print(String(FPSTR(post_line)) + dataString.length() + "\n\n" + dataString);
+          client.print(dataString);
         }
       } else {
         Serial.write(wait_to_send);

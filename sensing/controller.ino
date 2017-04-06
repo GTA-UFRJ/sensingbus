@@ -1,12 +1,17 @@
-//Code: GPS Logger
-//Changes : PEDROCRUZ
+/**
+*Author: Pedro Henrique Cruz Caminha
+*Universidade Federal do Rio de Janeiro
+*Departamento de Engenharia Eletrica
+*Project: Sensing Bus
+*Subject: The sensing layer Controller
+*********************************
+To be flashed to an Arduino UNO R3.
 
+This software reads data from GPS and sensor bank and saves it to the SD card. If the wifi interface is connected to a flushing node, data from SD card is flushed to the wifi module.
 
-// Não está confirmado:
-// Função         GND         Chuva     vazio       TMP       CL        DA      Vcc    Luz
-// Cor do fio  marrom  marrom claro  verde esc verde cla azul esc  azul cla  laranja branco
-// Arduino                    3                         5      SCL      SDA               A3
-//Função          COR Arduino
+*/
+
+//Função        COLOR Arduino
 //GND   marrom escuro     GND
 //Chuva  marrom claro      D6
 //Vazio  verde escuro       -
@@ -25,7 +30,7 @@
 
 #define NODE_ID 1 //The network id of the present device
 
-#define DEBUG true // Set true if 
+#define DEBUG false
 #define SERIAL_BAUD_RATE 9600
 
 #define GPS_RX 2
@@ -34,30 +39,27 @@
 
 #define WIFI_TX 4
 #define WIFI_RX 5
-#define WIFI_BAUD_RATE 57600
+#define WIFI_BAUD_RATE 38400
 
-#define DHT11_PIN 7
 #define DHTPIN 7
 #define DHTTYPE DHT11
 
-
-
-#define request "?"
-#define clear_to_send ":"
-#define end_of_file "#"
-#define wifi_freq 10
-#define wifi_timeout 20
+#define REQUEST "?"
+#define CLEAR_TO_SEND ":"
+#define END_OF_FILE "#"
+#define WIFI_FREQ 10
+#define WIFI_TIMEOUT 10
 
 #define SEPARATOR ","
 
-#define DELAY_TIME 150
+#define DELAY_TIME 50
 
 #define PIN_LIGHT A3
 #define SD_CHIP_SELECT 10
 #define PIN_RAIN A1
 
 
-const char string_0[] PROGMEM = "log.txt";
+const char string_0[] PROGMEM = "a.txt";
 const char string_1[] PROGMEM = "node_id=";
 const char string_2[] PROGMEM = "&type=data";
 const char string_3[] PROGMEM = "&header=datetime,lat,lng,"; // This string is broken in 2 so the buffer is not very big
@@ -80,11 +82,15 @@ const char debug_6[] PROGMEM = "File Restarted!";
 const char debug_7[] PROGMEM = "DHT failure";
 const char debug_8[] PROGMEM = "WiFi not available";
 const char debug_9[] PROGMEM = "Data sent";
+const char debug_10[] PROGMEM = "Printing file";
+const char debug_11[] PROGMEM = "File failure";
+const char debug_12[] PROGMEM = "File start failure";
 
 const char* const debug_table[] PROGMEM = {debug_0, debug_1, debug_2,
                                            debug_3, debug_4, debug_5,
                                            debug_6, debug_7, debug_8,
-                                           debug_9
+                                           debug_9, debug_10, debug_11,
+                                           debug_12
                                           };
 #endif
 
@@ -94,7 +100,7 @@ char buffer[40];
 TinyGPSPlus gps;
 DHT dht(DHTPIN, DHTTYPE);
 
-int iteration = 0;
+int wifi_count = 0;
 
 SoftwareSerial gpsSerial(GPS_RX, GPS_TX);
 SoftwareSerial wifiSerial(WIFI_RX, WIFI_TX);
@@ -102,11 +108,16 @@ SoftwareSerial wifiSerial(WIFI_RX, WIFI_TX);
 void start_file() {
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
   SD.remove(buffer);
-  if (SD.begin(SD_CHIP_SELECT)) {
+  if (SD.begin(10)) {
     strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
     File data_file = SD.open(buffer, FILE_WRITE);
     data_file.close();
   }
+ #if DEBUG
+  else{
+  print_debug(12); //File start failure
+  }
+#endif
 }
 
 #if DEBUG
@@ -122,9 +133,7 @@ void setup() {
   gpsSerial.begin(GPS_BAUD_RATE);  // gps begins after wifi because it is used first
 
   pinMode(10, OUTPUT);
-
-  //tal -start_file();
-  delay(DELAY_TIME);
+  start_file();
 
 #if DEBUG
   print_debug(0); //Searching for GPS
@@ -179,7 +188,7 @@ void send_data() {
       wifiSerial.print(a + "\n");
       delay(5);
       if (i > 20) {
-        wifiSerial.write(end_of_file);
+        wifiSerial.write(END_OF_FILE);
         start_message();
       }
     }
@@ -188,7 +197,7 @@ void send_data() {
       break;
     }
   }
-  wifiSerial.write(end_of_file);
+  wifiSerial.write(END_OF_FILE);
   data_file.close();
 
   //Remove the file and create a new
@@ -202,14 +211,14 @@ void send_data() {
 bool start_connection() {
   // Check for connection
   wifiSerial.listen();
-  wifiSerial.print(request);
+  wifiSerial.print(REQUEST);
   int index = 0;
   while (!wifiSerial.available() || !wifiSerial.isListening()) {
 #if DEBUG
-    print_debug(3);
+    print_debug(3); //Waiting WiFi
 #endif
     index++;
-    if (index > wifi_timeout)
+    if (index > WIFI_TIMEOUT)
       break;
     delay(DELAY_TIME);
   }
@@ -219,12 +228,13 @@ bool start_connection() {
     delay(DELAY_TIME);
     wifiIn += String(char (wifiSerial.read()));
   }
-  return (wifiIn == clear_to_send);
+  return (wifiIn == CLEAR_TO_SEND);
 }
 
 void loop() {
-  iteration++;
-  if (iteration % wifi_freq == 0) {
+  wifi_count++;
+  if (wifi_count > WIFI_FREQ) {
+    wifi_count = 0;
 #if DEBUG
     print_debug(2); //Asking for WiFi
 #endif
@@ -270,7 +280,17 @@ void loop() {
     File data_file = SD.open(buffer, FILE_WRITE);
     if (data_file) {
       data_file.print(data_string);
+      Serial.print(data_string);
+#if DEBUG
+       print_debug(10); //Printing file
+       
+#endif
       data_file.close();
     }
+#if DEBUG
+    else {
+        print_debug(11); //File failure
+     }
+#endif
   }
 }
