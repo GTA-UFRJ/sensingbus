@@ -105,8 +105,33 @@ def measurement_list(request):
     create a new measurement
     """
     if request.method == 'GET':
-        measurements = Measurement.objects.all()
-        serializer = MeasurementSerializer(measurements, many=True)
+        bus_name = request.GET.get("bus_name", "")
+        min_lat = request.GET.get("min_lat", "")
+        max_lat = request.GET.get("max_lat", "")
+        min_lng = request.GET.get("min_lng", "")
+        max_lng = request.GET.get("max_lng", "")
+        start_time = request.GET.get("start_time", "")
+        end_time = request.GET.get("end_time", "")
+        sensor_name = request.GET.get("sensor_name", "")
+
+        q = Measurement.objects.all()
+
+        if bus_name:
+            bus_key = Bus.objects.filter(name__iexact=bus_name).first().pk
+            q = q.filter(bus=bus_key)
+        if min_lat:
+            q = q.filter(lat__gte=min_lat)
+        if max_lat:
+            q = q.filter(lat__lte=max_lat)
+        if min_lng:
+            q = q.filter(lat__gte=min_lng)
+        if max_lng:
+            q = q.filter(lat__lte=max_lng)
+        if start_time:
+            q = q.filter(time__gte=start_time)
+        if end_time:
+            q = q.filter(time__lte=end_time)
+        serializer = MeasurementSerializer(q, many=True)
         return JSONResponse(serializer.data)
 
     elif request.method == 'POST':
