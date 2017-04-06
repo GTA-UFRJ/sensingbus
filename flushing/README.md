@@ -2,14 +2,14 @@
 This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
 ## Required Equipments:
-You will need some equipment to build a Flusher Node:
+Equipment needed to build a flusher node:
 * Raspberry Pi;
 * Ethernet Cable;
 * A WIFI adapter;
 * SD Card;
 * SD Card Reader.
 ## Preparation:
-Step 1) You must download some Operatig System. In this tutorial, Raspdian was chosen as OS. You must download it in the following link. 
+Step 1) Download some Operatig System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
 		
@@ -29,14 +29,14 @@ Connect WiFi dongle and restart Raspberry Pi, running the command
 		sudo reboot
 	
 	
-Now, you can see wlan0 interface after you run the following:
+Now, see wlan0 interface after you run the following:
 	
 		ifconfig -a
 		
 ## Turn Raspberry Pi into a Hotspot:
 ### Install the softwares:
 
-Step 1) You must install softwares onto the Raspberry Pi that it will act as a access point. Attention: You need Internet connection to do this step:
+Step 1) Install softwares onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
 
 		sudo update
 		sudo apt-get install isc-dhcp-server
@@ -46,7 +46,7 @@ Step 2) Install a iptables manager too:
 		
 		sudo apt-get install iptables-persistent
 		
-You have to say "YES" to both configuration screens.
+Type "YES" to both configuration screens.
 
 ### Set up DHCP Server:
 
@@ -107,7 +107,7 @@ Step 4.2) Edit the file /etc/network/interfaces in your favorite text editor. Th
 		iface eth0 inet dhcp
 		allow-hotplug wlan0
 		iface wlan0 inet static
-		  address 192.168.10.1
+		  address 192.168.0.1
 		  netmask 255.255.255.0
 
 ### Configure Access Point:
@@ -127,14 +127,16 @@ Step 2) Paste the following lines in this new file:
 		auth_algs=1
 		ignore_broadcast_ssid=0
 		wpa=2
-		wpa_passphrase=S3ns1nG_bu5
+		wpa_passphrase=<password>
 		wpa_key_mgmt=WPA-PSK
 		wpa_pairwise=CCMP
 		wpa_group_rekey=86400
 		ieee80211n=1
 		wme_enabled=1
+		
+Step 3) In this file, edit the variable wpa_passphrase to some password which it will be Wi-Fi's password.
 
-Step 3) Now you have to say to Raspberry Pi where to find this configuration file. Run that command to edit the file /etc/default/hostapd.
+Step 4) Say to Raspberry Pi where to find this configuration file. Run that command to edit the file /etc/default/hostapd.
 
 Find the line:
 		
@@ -143,7 +145,7 @@ Find the line:
 Edit it to say :
 		
 		DAEMON_CONF="/etc/hostapd/hostapd.conf" 
-Step 4) Run that command to edit the file /etc/default/hostapd.
+Step 5) Run that command to edit the file /etc/default/hostapd.
 
 Find the line:
 		
@@ -181,14 +183,27 @@ Step 2) Make it so it runs every time on boot:
 
 		sudo update-rc.d hostapd enable
 		sudo update-rc.d isc-dhcp-server enable
-### Reboot Raspberry Pi
+### Reboot Raspberry Pi/etc/hotsapd/hostapd.conf
 Step 1) Run the command 
 		
 		sudo reboot
 		
 ### Test the WiFi connection:
 
+### Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus. Run it.
 
+### Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
+
+### Run the script
+
+## There is other way to create a flusher node:
+
+### Download the SensingBusOS image in the following link: 
+
+### Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
+### Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
+
+### Run the script.
 
 
 
