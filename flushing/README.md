@@ -1,4 +1,4 @@
-# Sensing Bus Flusher
+# SensingBus Flushing Node
 This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
 ## Required Equipments:
