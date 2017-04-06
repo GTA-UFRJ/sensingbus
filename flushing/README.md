@@ -208,7 +208,7 @@ Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphr
 
 ### Generate a key and certificate:
 
-Step 3) Follow the instructions of section "Running flusher script".
+### Follow the instructions of section "Running flusher script".
 
 
 
