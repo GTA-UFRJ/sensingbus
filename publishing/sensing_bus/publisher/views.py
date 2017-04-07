@@ -39,10 +39,8 @@ def visualize(request):
         max_lat = request.POST.get("id_max_lat", "")
         min_lng = request.POST.get("id_min_lng", "")
         max_lng = request.POST.get("id_max_lng", "")
-        start_time = datetime.strptime(request.POST.get("id_start_time", ""),
-                                                        "%m/%d/%Y %I:%M %p")
-        end_time = datetime.strptime(request.POST.get("id_end_time", ""),
-                                                        "%m/%d/%Y %I:%M %p")
+        start_time = request.POST.get("id_start_time", "")
+        end_time = request.POST.get("id_end_time", "")
         sensor_name = request.POST.get("id_sensor_name_0", "")
 
         q = Measurement.objects.all()
@@ -59,9 +57,11 @@ def visualize(request):
         if max_lng:
             q = q.filter(lat__lte=max_lng)
         if start_time:
-            q = q.filter(time__gte=start_time)
+            q = q.filter(time__gte=datetime.strptime(start_time,
+                                        "%m/%d/%Y %I:%M %p"))
         if end_time:
-            q = q.filter(time__lte=end_time)
+            q = q.filter(time__lte=datetime.strptime(end_time,
+                                        "%m/%d/%Y %I:%M %p"))
 
         data = {'data' : []}
         for o in q:
@@ -101,9 +101,6 @@ def measurement_list(request):
     """
     get:
     List all code measurements
-
-    post:
-    create a new measurement
     """
     if request.method == 'GET':
         bus_name = request.GET.get("bus_name", "")
@@ -131,9 +128,11 @@ def measurement_list(request):
         if max_lng:
             q = q.filter(lat__lte=max_lng)
         if start_time:
-            q = q.filter(time__gte=start_time)
+            q = q.filter(time__gte=datetime.strptime(start_time,
+                                        "%Y-%m-%dT%H:%M:%S"))
         if end_time:
-            q = q.filter(time__lte=end_time)
+            q = q.filter(time__lte=datetime.strptime(end_time,
+                                        "%Y-%m-%dT%H:%M:%S"))
         serializer = MeasurementSerializer(q, many=True)
         return JSONResponse(serializer.data)
 
