@@ -1,5 +1,5 @@
 # SensingBus Flushing Node
-This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
+ The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
 ## Installation Guide
 
@@ -11,7 +11,8 @@ Equipment needed to build a flusher node:
 * SD Card;
 * SD Card Reader.
 ### Preparation:
-Step 1) Download some Operatig System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
+
+Step 1) Download some Operational System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
 		
@@ -25,8 +26,8 @@ Step 4) Check the Internet connection. Run the command.
 
 		ping 8.8.8.8
 		
-Step 5) Set up WiFi dongle:
-Connect WiFi dongle and restart Raspberry Pi, running the command
+Step 5) Set up Wi-Fi dongle:
+Connect Wi-Fi dongle and restart Raspberry Pi, running the command
 		
 		sudo reboot
 	
@@ -36,9 +37,11 @@ Now, see wlan0 interface after you run the following:
 		ifconfig -a
 		
 ## Turn Raspberry Pi into a Hotspot:
-### Install the softwares:
+This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf.
 
-Step 1) Install softwares onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
+### Install the software:
+
+Step 1) Install software onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
 
 		sudo update
 		sudo apt-get install isc-dhcp-server
@@ -197,7 +200,7 @@ Step 1) Run the command
 Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus.
 
 ### Generate a key and certificate:
-This section explains how to sign server and client certificates
+This tutorial followed this link's one: https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html. This section explains how to sign server and client certificates
 
 Step 1) Create a key
 
