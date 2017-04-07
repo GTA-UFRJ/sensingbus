@@ -2,7 +2,7 @@
 
 
 ## Instalation
-The Publisher Node is a server running on a virtual machine instantiated on a {Openstack}(https://docs.openstack.org/mitaka/) cloud service. 
+The Publisher Node is a server running on a virtual machine instantiated on a [Openstack](https://docs.openstack.org/mitaka/) cloud service. 
 To install the publisher node, just instantiate the virtual machine on the cloud service.
 Make sure the server's URL is the same configured on the flushing nodes.
 
