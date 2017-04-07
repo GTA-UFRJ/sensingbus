@@ -2,8 +2,8 @@
 
 
 ## Instalation
-The Publisher Node is a server running on a virtual machine instantiated on a cloud service. 
-To install it, just instantiate the virtual machine on the cloud service.
+The Publisher Node is a server running on a virtual machine instantiated on a {Openstack}(https://docs.openstack.org/mitaka/) cloud service. 
+To install the publisher node, just instantiate the virtual machine on the cloud service.
 Make sure the server's URL is the same configured on the flushing nodes.
 
 
@@ -33,6 +33,8 @@ After that, the development can start as a regular Django project.
 ### Setting Apache server
 
 To set the Apache server, follow the instructions to setup a Django application as a wsgi application https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/
+
+______________________________________________________________
 
 ### Project organization
 
