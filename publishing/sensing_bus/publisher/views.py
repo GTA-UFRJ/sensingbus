@@ -106,19 +106,21 @@ def measurement_list(request):
     """
     if request.method == 'GET':
         bus_name = request.GET.get("bus_name", "")
+        node_id = request.GET.get("node_id", "")
         min_lat = request.GET.get("min_lat", "")
         max_lat = request.GET.get("max_lat", "")
         min_lng = request.GET.get("min_lng", "")
         max_lng = request.GET.get("max_lng", "")
         start_time = request.GET.get("start_time", "")
         end_time = request.GET.get("end_time", "")
-        sensor_name = request.GET.get("sensor_name", "")
 
         q = Measurement.objects.all()
 
         if bus_name:
             bus_key = Bus.objects.filter(name__iexact=bus_name).first().pk
             q = q.filter(bus=bus_key)
+        if node_id:
+            q = q.filter(node=node_id)
         if min_lat:
             q = q.filter(lat__gte=min_lat)
         if max_lat:
@@ -135,12 +137,8 @@ def measurement_list(request):
         return JSONResponse(serializer.data)
 
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = MeasurementSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return JSONResponse(serializer.data, status=201)
-        return JSONResponse(serializer.errors, status=400)
+        html = "<html><body>This is not allowed. Use the url /measurements_batch_sec/ </body></html>"
+        return HttpResponse(html)
 
 @csrf_exempt
 def measurement_detail(request, pk):
