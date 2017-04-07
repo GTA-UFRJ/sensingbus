@@ -12,6 +12,8 @@ Equipment needed to build a flusher node:
 * SD Card Reader.
 ### Preparation:
 
+Download the flushing image from this [link](http://gloria.gta.ufrj.br/vm-templates/SensingBusOS.gz) or follow the steps bellow.
+
 Step 1) Download some Operational System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
