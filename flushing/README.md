@@ -1,5 +1,5 @@
 # SensingBus Flushing Node
-This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
+ The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
 ## Installation Guide
 
@@ -11,7 +11,8 @@ Equipment needed to build a flusher node:
 * SD Card;
 * SD Card Reader.
 ### Preparation:
-Step 1) Download some Operatig System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
+
+Step 1) Download some Operational System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
 		
@@ -25,8 +26,8 @@ Step 4) Check the Internet connection. Run the command.
 
 		ping 8.8.8.8
 		
-Step 5) Set up WiFi dongle:
-Connect WiFi dongle and restart Raspberry Pi, running the command
+Step 5) Set up Wi-Fi dongle:
+Connect Wi-Fi dongle and restart Raspberry Pi, running the command
 		
 		sudo reboot
 	
@@ -36,9 +37,11 @@ Now, see wlan0 interface after you run the following:
 		ifconfig -a
 		
 ## Turn Raspberry Pi into a Hotspot:
-### Install the softwares:
+This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf.
 
-Step 1) Install softwares onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
+### Install the software:
+
+Step 1) Install software onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
 
 		sudo update
 		sudo apt-get install isc-dhcp-server
@@ -196,9 +199,59 @@ Step 1) Run the command
 ### Running flusher script:
 Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus.
 
-Step 2) Edit the file fog_agent.py. Edit the variable MEASUREMENTS_URL to the Publishing URL.
+### Generate a key and certificate:
+This tutorial followed this link's one: https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html. This section explains how to sign server and client certificates
 
-Step 3) Run the script
+Step 1) Create a key
+
+		cd /root/ca
+		openssl genrsa -aes256 \
+			-out intermediate/private/www.example.com.key.pem 2048
+		chmod 400 intermediate/private/www.example.com.key.pem
+		
+Step 2) Use the private key to create a certificate signing request (CSR)
+
+		cd /root/ca
+		openssl req -config intermediate/openssl.cnf \
+      			-key intermediate/private/www.example.com.key.pem \
+      			-new -sha256 -out intermediate/csr/www.example.com.csr.pem
+
+Step 3) Enter pass phrase. Fill the other blanks.
+
+Step 4) Create a certificate
+
+		cd /root/ca
+		openssl ca -config intermediate/openssl.cnf \
+		      -extensions server_cert -days 375 -notext -md sha256 \
+		      -in intermediate/csr/www.example.com.csr.pem \
+		      -out intermediate/certs/www.example.com.cert.pem
+		chmod 444 intermediate/certs/www.example.com.cert.pem
+
+Step 5) Verify the certificate
+		
+		openssl x509 -noout -text \
+		      -in intermediate/certs/www.example.com.cert.pem
+		      
+Step 6) Use the CA certificate to verify that the new carticate might be trustful.
+
+		openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
+      			intermediate/certs/www.example.com.cert.pem
+			
+Step 7) Deploy the certificate. The following files needs to be available
+
+		ca-chain.cert.pem
+		www.example.com.key.pem
+		www.example.com.cert.pem
+
+### Edit the file fog_agent.py:
+
+Step 1) Change the variable MEASUREMENTS_URL to Publishing URL.
+
+Step 2) Change the variable PRIMARY_KEY to the address of the file of key generated in section "Generate a key and a certificate".
+
+Step 3) Change the variable LOCAL_CERTIFICATE to the address of the file of certificate generated in section "Generate a key and a certificate".
+
+### Run fog_agent.py
 
 ## Installation Guide:
 
@@ -206,9 +259,11 @@ Step 1) Download the SensingBusOS image in the following link: https://www.dropb
 
 Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
 
-### Generate a key and certificate:
+### Follow the instructions of section "Generate a key and a certificate".
 
-### Follow the instructions of section "Running flusher script".
+### Follow the instructions of section "Edit the file fog_agent.py".
+
+### Run fog_agent.py
 
 
 
