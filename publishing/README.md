@@ -9,7 +9,7 @@ To install the publisher node, just instantiate a virtual machine on a cloud ser
 #### Openstack Cloud
 We recommend use an [Openstack](https://docs.openstack.org/mitaka/) platform to build your cloud. The current version is Ocata, but the tool was developed on Mitaka version.
 
-You can use this [image](http://gloria.gta.ufrj.br/vm-templates/) to instantiate your publication node.
+Use this [image](http://gloria.gta.ufrj.br/vm-templates/publishing-node-image) to instantiate your publication node.
 
 
 ## Development
@@ -43,11 +43,11 @@ A template of apache configuration file can be found [here](https://github.com/p
 
 ## Certificate Authority
 
-You can follow this [tutorial](https://jamielinux.com/docs/openssl-certificate-authority/introduction.html) to create yout own Certificate Authority.
+Follow this [tutorial](https://jamielinux.com/docs/openssl-certificate-authority/introduction.html) to create a Certificate Authority.
 
 #### Generating User Keys
 
-Your flushing node has to generate a public key and a request for certificate and send those to the CA. The CA will generate a certificate allowing the node to communicate with the publishing node.
+The flushing node has to generate a public key and a request for certificate and send those to the CA. The CA will generate a certificate allowing the node to communicate with the publishing node.
 
 Do the following command on the flushing node:
 
@@ -69,7 +69,7 @@ openssl req -config openssl.cnf \
       -new -sha256 -out <your-path>/keys/intermediate/www.sensingbus.gta.ufrj.br.csr.pem
 ```
 
-Send these file to your CA and authorize user.
+Send these files to the CA and authorize user.
 
 #### Authorizing Users
 
