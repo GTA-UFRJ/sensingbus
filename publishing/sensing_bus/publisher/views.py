@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
 from publisher.models import Measurement
@@ -10,8 +11,6 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from publisher.serializers import MeasurementSerializer
 from publisher.serializers import MeasurementBatchList
-
-import datetime
 
 from .forms import VisualizeForm
 
@@ -40,8 +39,10 @@ def visualize(request):
         max_lat = request.POST.get("id_max_lat", "")
         min_lng = request.POST.get("id_min_lng", "")
         max_lng = request.POST.get("id_max_lng", "")
-        start_time = request.POST.get("id_start_time", "")
-        end_time = request.POST.get("id_end_time", "")
+        start_time = datetime.strptime(request.POST.get("id_start_time", ""),
+                                                        "%m/%d/%Y %I:%M %p")
+        end_time = datetime.strptime(request.POST.get("id_end_time", ""),
+                                                        "%m/%d/%Y %I:%M %p")
         sensor_name = request.POST.get("id_sensor_name_0", "")
 
         q = Measurement.objects.all()
@@ -78,7 +79,7 @@ def visualize(request):
             data['data'].append(d)
 
         data['max'] = 30
-        now = datetime.datetime.now()
+        now = datetime.now()
         html = "Data = %s" % data
         return JsonResponse(data)
 
