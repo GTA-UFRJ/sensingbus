@@ -255,7 +255,9 @@ Step 3) Change the variable LOCAL_CERTIFICATE to the address of the file of cert
 
 ## Installation Guide:
 
-Step 1) Download the SensingBusOS image in the following link: https://www.dropbox.com/s/557oetnzkeg8mpv/SensingBusOS.gz?dl=0
+Step 1) Download the SensingBusOS image in the following link: 
+
+		https://www.dropbox.com/s/557oetnzkeg8mpv/SensingBusOS.gz?dl=0
 
 Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
 
