@@ -11,9 +11,11 @@ class Bus(models.Model):
 class SensingNode(models.Model):
     """Represents a sensor node, from the Gathering layer"""
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE,
-         verbose_name="bus where the node is coupled", null=True)
+         verbose_name="bus where the node is coupled", null=True, blank=True)
     def __unicode__(self):
-        return "{}, {}".format(self.pk, self.bus.name)
+        if self.bus:
+            return "{}, {}".format(self.pk, self.bus.name)
+        return "{}".format(self.pk)
 
 class Stop(models.Model):
     """Represents a bus stop having a flushing node"""
