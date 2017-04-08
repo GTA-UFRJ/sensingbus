@@ -65,10 +65,11 @@ def visualize(request):
 
         data = {'data' : []}
         values = []
-        for o in q:
+        for o in q[:150]: #This value avoids that too many results overflow the browser
             d = {}
+            d['bus'] = o.bus.name
             d['lat'] = float(o.lat)
-            d['lng'] = float(o.lng)            
+            d['lng'] = float(o.lng)
             d['temperature'] = float(o.temperature)
             d['humidity'] = float(o.humidity)
             d['light'] = float(o.light)
@@ -88,8 +89,8 @@ def visualize(request):
             data['data'].append(d)
 
 
-        data['max'] = max(values)
-        data['min'] = min(values)
+        data['max'] = max(values or [0])
+        data['min'] = min(values or [0])
         #now = datetime.now()
         #html = "Data = %s" % data
         return JsonResponse(data)
