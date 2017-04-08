@@ -65,7 +65,7 @@ def visualize(request):
 
         data = {'data' : []}
         values = []
-        for o in q[:150]: #This value avoids that too many results overflow the browser
+        for o in q[:500]: #This value avoids that too many results overflow the browser
             d = {}
             d['bus'] = o.bus.name
             d['lat'] = float(o.lat)
