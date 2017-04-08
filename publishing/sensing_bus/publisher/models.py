@@ -13,8 +13,6 @@ class SensingNode(models.Model):
     bus = models.ForeignKey(Bus, on_delete=models.CASCADE,
          verbose_name="bus where the node is coupled", null=True, blank=True)
     def __unicode__(self):
-        if self.bus:
-            return "{}, {}".format(self.pk, self.bus.name)
         return "{}".format(self.pk)
 
 class Stop(models.Model):
