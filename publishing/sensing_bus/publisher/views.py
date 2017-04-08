@@ -64,23 +64,34 @@ def visualize(request):
                                         "%m/%d/%Y %I:%M %p"))
 
         data = {'data' : []}
+        values = []
         for o in q:
             d = {}
             d['lat'] = float(o.lat)
-            d['lng'] = float(o.lng)
+            d['lng'] = float(o.lng)            
+            d['temperature'] = float(o.temperature)
+            d['humidity'] = float(o.humidity)
+            d['light'] = float(o.light)
+            d['rain'] = float(o.rain)
             if sensor_name == 'TEMPERATURE':
                 d['value'] = float(o.temperature)
+                values.append(float(o.temperature))
             if sensor_name == 'HUMIDITY':
                 d['value'] = float(o.humidity)
+                values.append(float(o.humidity))
             if sensor_name == 'LIGHT':
                 d['value'] = float(o.light)
+                values.append(float(o.light))
             if sensor_name == 'RAIN':
                 d['value'] = float(o.rain)
+                values.append(float(o.rain))
             data['data'].append(d)
 
-        data['max'] = 30
-        now = datetime.now()
-        html = "Data = %s" % data
+
+        data['max'] = max(values)
+        data['min'] = min(values)
+        #now = datetime.now()
+        #html = "Data = %s" % data
         return JsonResponse(data)
 
     else:

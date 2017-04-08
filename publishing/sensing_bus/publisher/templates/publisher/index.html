@@ -18,10 +18,16 @@
   <h2>Architecture</h2>
   <p>This project has three layers, that perform different tasks. The whole schema is shown below:</p>
 
-  <figure>
-  <img src="{% static 'img/full_architecture_modules.png' %}" alt="System architecture" class="img-fluid" width="60%" height="60%" vspace="20"/>
-  <figcaption>Fig1. - SensingBus architecture.</figcaption>
-  </figure>
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <figure>
+      <img src="{% static 'img/full_architecture_modules.png' %}" alt="System architecture" class="img-responsive"/>
+      <figcaption>Fig1. - SensingBus architecture.</figcaption>
+      </figure>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
 
   <p>The Sensing layer is responsible for gathering raw data from the city. It is composed by wireless sensor nodes embbeded onto urban buses of public transportation.</p>
 
@@ -73,7 +79,6 @@
   </table>
 
   <p>The sensor bank of the current version of SensingBus has the following sensors:</p>
-
   <table class="table table-hover">
     <thead>
       <tr>
@@ -105,8 +110,20 @@
       </tr>
     </tbody>
   </table>
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <figure>
+        <img src="{% static 'img/sensing_node_pic.jpg' %}" alt="Sensing Node" class="img-responsive"/>
+        <figcaption>Fig2. - A sensor bank from a sensing node.</figcaption>
+      </figure>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
 
   <p>The Controller and Wireless Interface are programmable devices. In the folder "sensing" of the <a href="https://github.com/pedrocruz/sensing_bus">code repository</a>, the codes used to flash each of them can be found.</p>
+
+
 
   <h3>The Flushing layer</h3>
 <!-- This section must explain what is the flushing layer. What are its tasks inside the environment. -->
