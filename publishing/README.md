@@ -1,5 +1,4 @@
-#Sensing Bus Publisher
-
+# Sensing Bus Publisher
 
 ## Instalation
 The Publisher Node is a server running on a virtual machine instantiated on a Openstack cloud service. 
