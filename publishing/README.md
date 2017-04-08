@@ -9,7 +9,7 @@ To install the publisher node, just instantiate a virtual machine on a cloud ser
 #### Openstack Cloud
 We recommend use an [Openstack](https://docs.openstack.org/mitaka/) platform to build your cloud. The current version is Ocata, but the tool was developed on Mitaka version.
 
-Use this [image](http://gloria.gta.ufrj.br/vm-templates/publishing-node-image) to instantiate your publication node.
+Use this [image](http://gloria.gta.ufrj.br/vm-templates/publishing-node-image) to instantiate your publication node. To install this image, follw [these](https://docs.openstack.org/user-guide/dashboard-manage-images.html) instructions.
 
 
 ## Development
