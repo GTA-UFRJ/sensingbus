@@ -88,3 +88,5 @@ Verify if the certificate is valid:
  openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
       intermediate/certs/bob@example.com.cert.pem
  ```
+
+The installation is complete. Access the system through the web browser, at de configured URL.
