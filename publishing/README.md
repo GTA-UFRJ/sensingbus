@@ -1,5 +1,4 @@
-#Sensing Bus Publisher
-
+# Sensing Bus Publisher
 
 ## Instalation
 The Publisher Node is a server running on a virtual machine instantiated on a Openstack cloud service. 
@@ -9,7 +8,7 @@ To install the publisher node, just instantiate a virtual machine on a cloud ser
 #### Openstack Cloud
 We recommend use an [Openstack](https://docs.openstack.org/mitaka/) platform to build your cloud. The current version is Ocata, but the tool was developed on Mitaka version.
 
-Use this [image](http://gloria.gta.ufrj.br/vm-templates/publishing-node-image) to instantiate your publication node.
+Use this [image](http://gloria.gta.ufrj.br/vm-templates/publishing-node-image) to instantiate your publication node. To install this image, follw [these](https://docs.openstack.org/user-guide/dashboard-manage-images.html) instructions.
 
 
 ## Development
@@ -88,3 +87,5 @@ Verify if the certificate is valid:
  openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
       intermediate/certs/bob@example.com.cert.pem
  ```
+
+The installation is complete. Access the system through the web browser, at de configured URL.
