@@ -148,4 +148,6 @@ Verify if the certificate is valid:
       intermediate/certs/bob@example.com.cert.pem
  ```
 
-A working Publishing node must be working on https:\\<Virtual-Machine-Public-adress>.
+The publishing node web interface must be  working on https:\\"virtual-machine-public-address".
+
+Note that ""virtual-machine-public-address" must be replaced.
