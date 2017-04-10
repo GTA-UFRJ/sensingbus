@@ -75,7 +75,7 @@ Require all granted
 </Files>
 ```
 
-Create a Certificate Authority to validate users (flushing nodes). For security, Apache server is configured to accept only trusted users.
+Create a Certificate Authority to validate users (flushing nodes). For security, Apache server is configured to accept data insertion only of trusted users.
 
 ## Certificate Authority
 
