@@ -41,7 +41,8 @@ def visualize(request):
         max_lng = request.POST.get("id_max_lng", "")
         start_time = request.POST.get("id_start_time", "")
         end_time = request.POST.get("id_end_time", "")
-        sensor_name = request.POST.get("id_sensor_name_0", "")
+        sensor_name = request.POST.get("sensor_name", "")
+        print "Sensor name = {}".format(sensor_name)
 
         q = Measurement.objects.all()
 
@@ -74,16 +75,16 @@ def visualize(request):
             d['humidity'] = float(o.humidity)
             d['light'] = float(o.light)
             d['rain'] = float(o.rain)
-            if sensor_name == 'TEMPERATURE':
+            if sensor_name.lower() == 'temperature':
                 d['value'] = float(o.temperature)
                 values.append(float(o.temperature))
-            if sensor_name == 'HUMIDITY':
+            if sensor_name.lower() == 'humidity':
                 d['value'] = float(o.humidity)
                 values.append(float(o.humidity))
-            if sensor_name == 'LIGHT':
+            if sensor_name.lower() == 'light':
                 d['value'] = float(o.light)
                 values.append(float(o.light))
-            if sensor_name == 'RAIN':
+            if sensor_name.lower() == 'rain':
                 d['value'] = float(o.rain)
                 values.append(float(o.rain))
             data['data'].append(d)
