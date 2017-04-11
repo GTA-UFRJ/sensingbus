@@ -45,7 +45,6 @@ def visualize(request):
         print "Sensor name = {}".format(sensor_name)
 
         q = Measurement.objects.all()
-
         if bus_name:
             bus_key = Bus.objects.filter(name__iexact=bus_name).first().pk
             q = q.filter(bus=bus_key)

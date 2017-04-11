@@ -18,7 +18,9 @@ heatmap = new HeatmapOverlay(map,
     "useLocalExtrema": false,
     latField: 'lat',
     lngField: 'lng',
-    valueField: 'value'
+    valueField: 'value',
+    dissipating: false,
+    maxIntensity: 12000,
   }
 );
 
@@ -61,6 +63,7 @@ frm.submit(function () {
             console.log("Data:");
             console.log(data);
             heatmap.setData(data);
+            heatmap.set('dissipating', false);
             var infowindow = new google.maps.InfoWindow();
 
             function placeMarker(info){
@@ -69,8 +72,8 @@ frm.submit(function () {
                     '<div id="siteNotice">'+
                     '</div>'+
                     '<div id="bodyContent">'+
-                    '<p><b>Temperature: </b><p>' + info.temperature + '</p>' +
-                    '<p><b>Humidity: </b><p>' + info.humidity + '</p>' +
+                    '<p><b>Temperature: </b><p>' + info.temperature + ' C</p>' +
+                    '<p><b>Humidity: </b><p>' + info.humidity + ' %</p>' +
                     '<p><b>Rain: </b><p>' + info.rain + '</p>' +
                     '<p><b>Light intensity: </b><p>' + info.light + '</p>' +
                     '</div>'+
@@ -101,12 +104,7 @@ frm.submit(function () {
             }
             //Here we draw markers
             for (var i = 0; i < data.data.length; i++){
-
                 placeMarker(data.data[i])
-
-
-
-                
             }
         },
         error: function(data) {
