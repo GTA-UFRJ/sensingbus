@@ -72,6 +72,7 @@ frm.submit(function () {
                     '<div id="siteNotice">'+
                     '</div>'+
                     '<div id="bodyContent">'+
+                    '<p><b>Time: </b><p>' + info.time + '</p>' +
                     '<p><b>Temperature: </b><p>' + info.temperature + ' C</p>' +
                     '<p><b>Humidity: </b><p>' + info.humidity + ' %</p>' +
                     '<p><b>Rain: </b><p>' + info.rain + '</p>' +

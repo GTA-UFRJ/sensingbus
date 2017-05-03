@@ -74,6 +74,7 @@ def visualize(request):
             d['humidity'] = float(o.humidity)
             d['light'] = float(o.light)
             d['rain'] = float(o.rain)
+            d['time'] = o.time
             if sensor_name.lower() == 'temperature':
                 d['value'] = float(o.temperature)
                 values.append(float(o.temperature))
