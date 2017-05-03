@@ -161,16 +161,16 @@ Access [Certbot](https://certbot.eff.org/) to get updated instructions.
 #### Instalation
 
 Append the repository to your list:
-
+```
   $ sudo add-apt-repository ppa:certbot/certbot
   $ sudo apt-get update
-
+```
 Install:
-
+```
   $ sudo apt-get install python-certbot-apache
-
+```
 Obtain and generate automatically the certicates and add them to Apache:
-
+```
   $ certbot --apache
-
+```
 Check if works accessing the configured URL from a browser.
