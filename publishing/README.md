@@ -151,3 +151,26 @@ Verify if the certificate is valid:
 The publishing node web interface must be  working on https:\\"virtual-machine-public-address".
 
 Note that ""virtual-machine-public-address" must be replaced.
+
+## Open Certificate Authority
+
+Using certificates signed by a private CA generates a warning for user on browser. [Let's Encrypt](https://letsencrypt.org/) is an open CA that provides free certificates. The installation and configuration takes just a few minutes.
+
+Access [Certbot](https://certbot.eff.org/) to get updated instructions.
+
+#### Instalation
+
+Append the repository to your list:
+
+  $ sudo add-apt-repository ppa:certbot/certbot
+  $ sudo apt-get update
+
+Install:
+
+  $ sudo apt-get install python-certbot-apache
+
+Obtain and generate automatically the certicates and add them to Apache:
+
+  $ certbot --apache
+
+Check if works accessing the configured URL from a browser.
