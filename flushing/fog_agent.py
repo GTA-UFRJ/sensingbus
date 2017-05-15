@@ -17,7 +17,7 @@ import threading, Queue
 
 signal(SIGPIPE, SIG_DFL)
 
-SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem' #To verify server
+#SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem' #To verify server
 STOP_ID = 1 #This raspberrie's id
 MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/' #Endpoint of insertion api
 
@@ -39,13 +39,13 @@ def send_thread(thread_name,q):
                 if ( b is not None):
                     output['batches'].append(b)
             cloud_client(output)    
-       time.sleep(30)
+        time.sleep(30)
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
     r = requests.post(MEASUREMENTS_URL,
                     json=payload,
-                    verify=SERVER_CERTS,
+                    #verify=SERVER_CERTS,
                     cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
     print r
 
@@ -64,21 +64,29 @@ class S(BaseHTTPRequestHandler):
         postvars = parse_qs(self.rfile.read(post_size),
                                                 keep_blank_values=1)
         input_batches['node_id'] = postvars['node_id'][0]
+
+        print "postvars load = {}".format(postvars['load'])
         for line in postvars['load']:
             tmp = line.split('\n')
 
         #delete data with defective date
         delete_list = []
         for i in range(len(tmp)):
-            if (tmp[i][0:-1] == 0):
+            #print "tmp[{}] = {}".format(i, tmp[i])
+            date = tmp[i].split(",")[0]
+            try:
+               date = datetime.datetime.strptime(date, "%d%m%y%H%M%S00")
+            except ValueError:
                 delete_list.append(i)
         for i in reversed(delete_list):
+            print "deleting deffective date"
             del tmp[i]
-                    
+        #print "Tmp = {}".format(tmp[0:-1])            
         input_batches['type'] = str(postvars['type'][0])
         input_batches['header'] = str(postvars['header'][0])
-        input_batches['received'] = str(datetime.datetime.now())
-        input_batches['load'] = tmp[0:-1] #the last line is always empty 
+        input_batches['received'] = datetime.datetime.now().strftime("%d%m%y%H%M%S00")
+        input_batches['load'] = tmp[0:-1] #the last line is always empty
+        #print "Load = {}".format(tmp[0:-1])
         q.put(input_batches)
         return
 
