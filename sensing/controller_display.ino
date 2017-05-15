@@ -11,9 +11,10 @@ This software receives data from the Controller and sends it over to the Flushin
 
 */
 
+//Cabo 8 vias
 //Função        COLOR Arduino
 //GND   marrom escuro     GND
-//Chuva  marrom claro      D6
+//Chuva  marrom claro      A1
 //Vazio  verde escuro       -
 //Temp    verde claro      D7
 //Rxwifi   azul claro      D4
@@ -21,16 +22,23 @@ This software receives data from the Controller and sends it over to the Flushin
 //Vcc         laranja     Vcc
 //Luz          branco      A3
 
-#include <avr/pgmspace.h> 
+// Display
+//SCL (display)     -      A5
+//SDA (display)     -      A4
+
+#include <avr/pgmspace.h>
 #include <SoftwareSerial.h>
 #include <SD.h>
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
 
 #include "TinyGPS++.h"
 #include "DHT.h"
 
 #define NODE_ID 1 //The network id of the present device
 
-#define DEBUG false
+#define DEBUG true
 #define SERIAL_BAUD_RATE 9600
 
 #define GPS_RX 2
@@ -59,7 +67,7 @@ This software receives data from the Controller and sends it over to the Flushin
 #define PIN_RAIN A1
 
 
-const char string_0[] PROGMEM = "a.txt";
+const char string_0[] PROGMEM = "A.TXT";
 const char string_1[] PROGMEM = "node_id=";
 const char string_2[] PROGMEM = "&type=data";
 const char string_3[] PROGMEM = "&header=datetime,lat,lng,"; // This string is broken in 2 so the buffer is not very big
@@ -71,7 +79,6 @@ const char* const string_table[] PROGMEM = {string_0, string_1, string_2,
                                             string_3, string_4, string_5
                                            };
 
-#if DEBUG
 const char debug_0[] PROGMEM = "Searching for GPS";
 const char debug_1[] PROGMEM = "GPS Found!";
 const char debug_2[] PROGMEM = "Asking for wifi";
@@ -82,23 +89,27 @@ const char debug_6[] PROGMEM = "File Restarted!";
 const char debug_7[] PROGMEM = "DHT failure";
 const char debug_8[] PROGMEM = "WiFi not available";
 const char debug_9[] PROGMEM = "Data sent";
-const char debug_10[] PROGMEM = "Printing file";
+const char debug_10[] PROGMEM = "Storing info";
 const char debug_11[] PROGMEM = "File failure";
 const char debug_12[] PROGMEM = "File start failure";
+const char debug_13[] PROGMEM = "                ";
 
 const char* const debug_table[] PROGMEM = {debug_0, debug_1, debug_2,
                                            debug_3, debug_4, debug_5,
                                            debug_6, debug_7, debug_8,
                                            debug_9, debug_10, debug_11,
-                                           debug_12
+                                           debug_12, debug_13
                                           };
-#endif
+
 
 char buffer[40];
 
 //DateTime is in DDMMYYHHMMSSCC format
 TinyGPSPlus gps;
 DHT dht(DHTPIN, DHTTYPE);
+
+//Start display in address 0x27
+LiquidCrystal_I2C lcd(0x3F,2,1,0,4,5,6,7,3, POSITIVE);
 
 int wifi_count = 0;
 
@@ -108,40 +119,34 @@ SoftwareSerial wifiSerial(WIFI_RX, WIFI_TX);
 void start_file() {
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
   SD.remove(buffer);
-  //if (SD.begin(10)) {
-    strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
-    File data_file = SD.open(buffer, FILE_WRITE);
-    data_file.close();
-  //}
- #if DEBUG
-  /*else{
-  print_debug(12); //File start failure
-  }*/
-#endif
+  File data_file = SD.open(buffer, FILE_WRITE);
+  data_file.close();
 }
 
-#if DEBUG
 void print_debug(int i) {
+  lcd.setCursor(0,1);
+  strcpy_P(buffer, (char*)pgm_read_word(&(debug_table[13])));
+  lcd.print(buffer);
+  lcd.setCursor(0,1);
   strcpy_P(buffer, (char*)pgm_read_word(&(debug_table[i])));
-  Serial.println(buffer);
+  lcd.print(buffer);  
 }
-#endif
 
 void setup() {
   Serial.begin(SERIAL_BAUD_RATE);
   wifiSerial.begin(WIFI_BAUD_RATE);
   gpsSerial.begin(GPS_BAUD_RATE);  // gps begins after wifi because it is used first
 
-  pinMode(10, OUTPUT);
-  if (!SD.begin(10)) {
-    print_debug(12);
-    return;
-  }
-  start_file();
+  // Start lcd
+  lcd.begin (16,2);
+  lcd.setBacklight(HIGH);
 
-#if DEBUG
+  pinMode(10, OUTPUT);
+  if (!SD.begin(SD_CHIP_SELECT)){
+    print_debug(12);
+  }
+
   print_debug(0); //Searching for GPS
-#endif
 
   // collecting GPS data
   while (!gps.time.isUpdated()) {
@@ -150,9 +155,7 @@ void setup() {
     }
   }
 
-#if DEBUG
   print_debug(1); //GPS Found!
-#endif
 }
 
 void start_message() {
@@ -174,9 +177,7 @@ void start_message() {
 }
 
 void send_data() {
-#if DEBUG
   print_debug(4);
-#endif
 
   //Send the whole file
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
@@ -207,9 +208,7 @@ void send_data() {
   //Remove the file and create a new
   start_file();
 
-#if DEBUG
   print_debug(9);
-#endif
 }
 
 bool start_connection() {
@@ -218,9 +217,7 @@ bool start_connection() {
   wifiSerial.print(REQUEST);
   int index = 0;
   while (!wifiSerial.available() || !wifiSerial.isListening()) {
-#if DEBUG
     print_debug(3); //Waiting WiFi
-#endif
     index++;
     if (index > WIFI_TIMEOUT)
       break;
@@ -239,16 +236,12 @@ void loop() {
   wifi_count++;
   if (wifi_count > WIFI_FREQ) {
     wifi_count = 0;
-#if DEBUG
     print_debug(2); //Asking for WiFi
-#endif
     if (start_connection()) {
       send_data();
-#if DEBUG  // An ugly way to make code smaller
       print_debug(5); //WiFi available
     } else {
       print_debug(8); //WiFi not available
-#endif
     }
   }
 
@@ -260,41 +253,40 @@ void loop() {
     }
   }
 
-#if DEBUG
   if (isnan(dht.readTemperature()) || isnan(dht.readHumidity()) ) {
     print_debug(7); //DHT failure
   }
-#endif
 
   // separating GPS data
   if (gps.time.isUpdated()) {
-#if DEBUG
-    print_debug(1); //GPS Found!
-#endif
+    //print_debug(1); //GPS Found!
 
+    lcd.setCursor(0,0);
+    strcpy_P(buffer, (char*)pgm_read_word(&(debug_table[13])));
+    lcd.print(buffer);
+    lcd.setCursor(0,0);  
+    lcd.print(String(analogRead(PIN_LIGHT)) + SEPARATOR +
+              String(dht.readTemperature(),0) + "C" + SEPARATOR +
+              String(dht.readHumidity(),0) + "%" + SEPARATOR +
+              String(analogRead(PIN_RAIN)));
+    //Serial.println("DAte:" + String(gps.date.value()) +","+ String(gps.time.value()));
     String data_string = String(gps.date.value()) + String(gps.time.value()) + SEPARATOR +
       String(gps.location.lat(), 5) + SEPARATOR +
       String(gps.location.lng(), 5) + SEPARATOR +
       String(analogRead(PIN_LIGHT)) + SEPARATOR +
       String(dht.readTemperature()) + SEPARATOR +
       String(dht.readHumidity()) + SEPARATOR +
-      String(digitalRead(PIN_RAIN)) +
+      String(analogRead(PIN_RAIN)) +
       "\n";
     strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
     File data_file = SD.open(buffer, FILE_WRITE);
     if (data_file) {
       data_file.print(data_string);
       Serial.print(data_string);
-#if DEBUG
        print_debug(10); //Printing file
-       
-#endif
       data_file.close();
-    }
-#if DEBUG
-    else {
+    }else {
         print_debug(11); //File failure
      }
-#endif
   }
 }
