@@ -41,8 +41,8 @@ class Measurement(models.Model):
     #Measurements
     temperature = models.DecimalField(max_digits=4, decimal_places=1, null=True)
     humidity = models.DecimalField(max_digits=4, decimal_places=1, null=True)
-    light = models.DecimalField(max_digits=4, decimal_places=1, null=True)
-    rain = models.DecimalField(max_digits=4, decimal_places=1, null=True)
+    light = models.DecimalField(max_digits=5, decimal_places=1, null=True)
+    rain = models.DecimalField(max_digits=5, decimal_places=1, null=True)
 
     def __unicode__(self):
         return "{}, {}, {}, {}".format(self.node, self.bus, self.stop, self.time)
