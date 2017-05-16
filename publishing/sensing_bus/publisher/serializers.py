@@ -32,10 +32,15 @@ class MeasurementBatchSerializer (serializers.Serializer):
             m['time'] = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00')
             m['lat'] = data[column_names.index("lat")]
             m['lng'] = data[column_names.index("lng")]
-            m['temperature'] = data[column_names.index("light")]
-            m['humidity'] = data[column_names.index("temperature")]
-            m['light'] = data[column_names.index("humidity")]
+            #m['temperature'] = data[column_names.index("light")]
+            #m['humidity'] = data[column_names.index("temperature")]
+            #m['light'] = data[column_names.index("humidity")]
+            #m['rain'] = data[column_names.index("rain")]
+            m['temperature'] = data[column_names.index("temperature")]
+            m['humidity'] = data[column_names.index("humidity")]
+            m['light'] = data[column_names.index("light")]
             m['rain'] = data[column_names.index("rain")]
+
             self.m_list.append(m)
         return validated_data
     
