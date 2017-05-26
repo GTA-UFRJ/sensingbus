@@ -82,3 +82,6 @@ The publishing API offers the retrieval of measurements using filters. A user re
 - **max_lng**: Selects measurements with longitudes smaller than **max_lng**;
 
 An example url is www.your-website.com/data?bus_id=123&sensor_name=temperature
+
+### User's Manual
+To use the visualization tool, the user just needs access the url: https://sensingbus.gta.ufrj.br/visualize/. The user can select a filter and see this measures at the map.
