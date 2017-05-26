@@ -1,10 +1,13 @@
+
 def cloud_client(ip, port):
-    import requests
-    #import json
-    #import simplejson
-    from signal import signal, SIGPIPE, SIG_DFL
-    signal(SIGPIPE, SIG_DFL)
-    payload = {'node_id': '1', 'type': 'data',
+	import requests
+	#import json
+	#import simplejson
+	from signal import signal, SIGPIPE, SIG_DFL
+	signal(SIGPIPE, SIG_DFL)
+	j = 0
+	#while (j < 5):
+	payload = {'node_id': 1, 'type': 'data',
             'header' : 'datetime,lat,lng,light,temperature,humidity,rain',
             'load' : '25081616493200,-22.865690,-43.223827,999,35.00,31.00,781\n \
                 25081616493300,-22.865690,-43.223831,999,35.00,31.00,777\n \
@@ -19,12 +22,15 @@ def cloud_client(ip, port):
                 25081616494200,-22.865694,-43.223831,998,35.00,31.00,785\n \
                 25081616494300,-22.865694,-43.223835,999,35.00,30.00,780\n \
                 25081616494400,-22.865694,-43.223835,999,35.00,30.00,780'}
-    headers = {'Content-Type': 'application/x-www-form-urlencoded', 
-            'Content-Length': str(len(payload))}
-    r = requests.post('http://%s:%d' %(ip, port), data=payload, headers=headers)
+	headers = {'Content-Type': 'application/x-www-form-urlencoded', 
+			'Content-Length': str(len(payload))}
+	r = requests.post('http://%s:%d' %(ip, port), data=payload, headers=headers)
+	#j = j + 1
 #print r.json()
 
+
 if __name__ == "__main__":
-    ip = '192.168.0.20'
-    port = 50000
-    cloud_client(ip, port)
+	ip = '192.168.0.1'
+	port = 50000
+	cloud_client(ip, port)	
+	

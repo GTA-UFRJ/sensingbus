@@ -1,15 +1,20 @@
-# Sensing Bus Flusher
-This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf. The main tutorial's objetive is allowed any users can build a flusher node without any problem at all. 
+# SensingBus Flushing Node
+ The main tutorial's objetive is to allow any users can build a flusher node without any problem at all. 
 
-## Required Equipments:
-You will need some equipment to build a Flusher Node:
+## Installation Guide
+
+### Required Equipments:
+Equipment needed to build a flusher node:
 * Raspberry Pi;
 * Ethernet Cable;
 * A WIFI adapter;
 * SD Card;
 * SD Card Reader.
-## Preparation:
-Step 1) You must download some Operatig System. In this tutorial, Raspdian was chosen as OS. You must download it in the following link. 
+### Preparation:
+
+Download the flushing image from this [link](http://gloria.gta.ufrj.br/vm-templates/SensingBusOS.gz) or follow the steps bellow. To install the image on raspberry, follow [these](https://www.raspberrypi.org/documentation/installation/installing-images/) instructions.
+
+Step 1) Download some Operational System. In this tutorial, Raspdian was chosen as OS. Download it in the following link. 
 
 		https://www.raspberrypi.org/downloads/raspbian/
 		
@@ -23,20 +28,22 @@ Step 4) Check the Internet connection. Run the command.
 
 		ping 8.8.8.8
 		
-Step 5) Set up WiFi dongle:
-Connect WiFi dongle and restart Raspberry Pi, running the command
+Step 5) Set up Wi-Fi dongle:
+Connect Wi-Fi dongle and restart Raspberry Pi, running the command
 		
 		sudo reboot
 	
 	
-Now, you can see wlan0 interface after you run the following:
+Now, see wlan0 interface after you run the following:
 	
 		ifconfig -a
 		
 ## Turn Raspberry Pi into a Hotspot:
-### Install the softwares:
+This tutorial followed this link's one: https://cdn-learn.adafruit.com/downloads/pdf/setting-up-a-raspberry-pi-as-a-wifi-access-point.pdf.
 
-Step 1) You must install softwares onto the Raspberry Pi that it will act as a access point. Attention: You need Internet connection to do this step:
+### Install the software:
+
+Step 1) Install software onto the Raspberry Pi that it will act as a access point. Attention: Internet connection needed to do this step:
 
 		sudo update
 		sudo apt-get install isc-dhcp-server
@@ -46,7 +53,7 @@ Step 2) Install a iptables manager too:
 		
 		sudo apt-get install iptables-persistent
 		
-You have to say "YES" to both configuration screens.
+Type "YES" to both configuration screens.
 
 ### Set up DHCP Server:
 
@@ -107,7 +114,7 @@ Step 4.2) Edit the file /etc/network/interfaces in your favorite text editor. Th
 		iface eth0 inet dhcp
 		allow-hotplug wlan0
 		iface wlan0 inet static
-		  address 192.168.10.1
+		  address 192.168.0.1
 		  netmask 255.255.255.0
 
 ### Configure Access Point:
@@ -127,14 +134,16 @@ Step 2) Paste the following lines in this new file:
 		auth_algs=1
 		ignore_broadcast_ssid=0
 		wpa=2
-		wpa_passphrase=S3ns1nG_bu5
+		wpa_passphrase=<password>
 		wpa_key_mgmt=WPA-PSK
 		wpa_pairwise=CCMP
 		wpa_group_rekey=86400
 		ieee80211n=1
 		wme_enabled=1
+		
+Step 3) In this file, edit the variable wpa_passphrase to some password which it will be Wi-Fi's password.
 
-Step 3) Now you have to say to Raspberry Pi where to find this configuration file. Run that command to edit the file /etc/default/hostapd.
+Step 4) Say to Raspberry Pi where to find this configuration file. Run that command to edit the file /etc/default/hostapd.
 
 Find the line:
 		
@@ -143,7 +152,7 @@ Find the line:
 Edit it to say :
 		
 		DAEMON_CONF="/etc/hostapd/hostapd.conf" 
-Step 4) Run that command to edit the file /etc/default/hostapd.
+Step 5) Run that command to edit the file /etc/default/hostapd.
 
 Find the line:
 		
@@ -181,14 +190,84 @@ Step 2) Make it so it runs every time on boot:
 
 		sudo update-rc.d hostapd enable
 		sudo update-rc.d isc-dhcp-server enable
-### Reboot Raspberry Pi
+		
+### Reboot Raspberry Pi/etc/hotsapd/hostapd.conf
 Step 1) Run the command 
 		
 		sudo reboot
 		
 ### Test the WiFi connection:
 
+### Running flusher script:
+Step 1) Download the file flushing/fog_agent.py in the https://github.com/pedrocruz/sensing_bus.
 
+### Generate a key and certificate:
+This tutorial followed this link's one: https://jamielinux.com/docs/openssl-certificate-authority/sign-server-and-client-certificates.html. This section explains how to sign server and client certificates
+
+Step 1) Create a key
+
+		cd /root/ca
+		openssl genrsa -aes256 \
+			-out intermediate/private/www.example.com.key.pem 2048
+		chmod 400 intermediate/private/www.example.com.key.pem
+		
+Step 2) Use the private key to create a certificate signing request (CSR)
+
+		cd /root/ca
+		openssl req -config intermediate/openssl.cnf \
+      			-key intermediate/private/www.example.com.key.pem \
+      			-new -sha256 -out intermediate/csr/www.example.com.csr.pem
+
+Step 3) Enter pass phrase. Fill the other blanks.
+
+Step 4) Create a certificate
+
+		cd /root/ca
+		openssl ca -config intermediate/openssl.cnf \
+		      -extensions server_cert -days 375 -notext -md sha256 \
+		      -in intermediate/csr/www.example.com.csr.pem \
+		      -out intermediate/certs/www.example.com.cert.pem
+		chmod 444 intermediate/certs/www.example.com.cert.pem
+
+Step 5) Verify the certificate
+		
+		openssl x509 -noout -text \
+		      -in intermediate/certs/www.example.com.cert.pem
+		      
+Step 6) Use the CA certificate to verify that the new carticate might be trustful.
+
+		openssl verify -CAfile intermediate/certs/ca-chain.cert.pem \
+      			intermediate/certs/www.example.com.cert.pem
+			
+Step 7) Deploy the certificate. The following files needs to be available
+
+		ca-chain.cert.pem
+		www.example.com.key.pem
+		www.example.com.cert.pem
+
+### Edit the file fog_agent.py:
+
+Step 1) Change the variable MEASUREMENTS_URL to Publishing URL.
+
+Step 2) Change the variable PRIMARY_KEY to the address of the file of key generated in section "Generate a key and a certificate".
+
+Step 3) Change the variable LOCAL_CERTIFICATE to the address of the file of certificate generated in section "Generate a key and a certificate".
+
+### Run fog_agent.py
+
+## Installation Guide:
+
+Step 1) Download the SensingBusOS image in the following link: 
+
+		https://www.dropbox.com/s/557oetnzkeg8mpv/SensingBusOS.gz?dl=0
+
+Step 2) Edit the file /etc/hotsapd/hostapd.conf. Change the variable wpa_passphrase to some password which it will be Wi-Fi's password.
+
+### Follow the instructions of section "Generate a key and a certificate".
+
+### Follow the instructions of section "Edit the file fog_agent.py".
+
+### Run fog_agent.py
 
 
 

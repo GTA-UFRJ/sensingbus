@@ -1,7 +1,7 @@
-# Sensing_bus
+# SensingBus
 Urban Sensing Through Bus-Based Mobility
-fog
-This project is a bus-based sensing platform for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service. The whole schema is shown below: 
+
+This project is a bus-based sensing system for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service. The whole schema is shown below: 
 
 <img src="img/bus_distribution.png" alt="System layers" width="60%" height="60%"/>
 
@@ -56,6 +56,19 @@ The Controller and Wireless Interface are programmable devices. In the folder "s
 
 #### The Flushing node
 <!-- This section must explain what is the flushing node. How does it work? What are the technologies involved?-->
+The Flushing layer allows a descentralized pre-processing of data from Sensing layer. The Flushing layer receives the data from Sensing layer and analize the data to identify defective data, then deletes it. After that, this layer is responsible to send this data to Publishing layer. Beside that, this layer tries to ensure autheticity and acumulation of data. 
+
+### The Flushing node
+Every flushing node is responsible of receives data from sensing nodes, delete defective data, do a acumulation data and sends to Publishing node. 
+
+The devices used to implement this node are on the following table:
+
+| Module                 | Device               | Manufacturer            |
+|------------------------|----------------------|-------------------------|
+| Controller             | Raspberry Pi model B | Raspberry Pi Foundation |
+| Wireless Interface     | Wi-Pi                | element14               |
+
+The Flushing Nodes runs a code responsible to execute the flushing layer's functions. This nodes use bus station to receive. In the folder "flushing" of the current project, all codes used in this layer can be found.
 
 ### The Publishing layer
 <!-- This section must explain what is the publishing layer. What are its tasks inside the environment. -->
@@ -85,3 +98,6 @@ An example url is www.your-website.com/data?bus_id=123&sensor_name=temperature
 
 ### User's Manual
 To use the visualization tool, the user just needs access the url: https://sensingbus.gta.ufrj.br/visualize/. The user can select a filter and see this measures at the map.
+
+### Instalation Manual
+To install the system, follow the instructions on the README.md located at every layer directory.

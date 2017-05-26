@@ -4,8 +4,197 @@
 
 {% block content %}
 
+{% load static from staticfiles %}
+
 <div class="col-md-8" id="welcome-pane">
-  <h2>Welcome to SensingBus</h2>
-  <p>This is SensingBus project, an initiative to gather environmental data for smart cities with innovative communication paradigms.</p>
+  <h1>Welcome to SensingBus</h1>
+
+  <p>This project is a bus-based sensing system for Smart Cities. In a broader view, sensor nodes, embbeded onto buses, gather data about the city. Such data is delivered to users using access points mounted into the bus stops of the city. Data is presented to users using a cloud service.</p>
+
+
+  <p>The schema is abstracted in three layers: sensing, flushing, and publishing. These layers are mapped into the architecture of the current project.</p>
+
+
+  <h2>Architecture</h2>
+  <p>This project has three layers, that perform different tasks. The whole schema is shown below:</p>
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <figure>
+      <img src="{% static 'img/full_architecture_modules.png' %}" alt="System architecture" class="img-responsive"/>
+      <figcaption>Fig1. - SensingBus architecture.</figcaption>
+      </figure>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+  <p>The Sensing layer is responsible for gathering raw data from the city. It is composed by wireless sensor nodes embbeded onto urban buses of public transportation.</p>
+
+  <p>The Flushing layer receives raw data directly from the Sensing layer and sends it to the Publishing layer, through the Internet. It is composed by access points, mounted on bus stops.</p>
+
+  <p>The Publishing layer receives data from all the nodes in the Flushing layer and serves data to the users, using an API and a web interface. This layer is composed by a server running on a distributed cloud.</p>
+
+  <p>Each layer is explained in detail throughout the next sections.</p>
+
+  <h3>Sensing layer</h3>
+  <p>The Sensing layer is a mobile wireless sensor network that gathers data from the city, using buses as mobility platform. Every node in this network is capable of gathering data, storing it and send it to the Flushing layer.</p>
+
+  <p>There should be one Sensing node per bus.</p>
+
+  <h4>The Sensing Node</h4>
+  <p>Every sensing node is cabable of gathering data, storing and transmitting it to a Flushing node. The Sensing Node follows an architecture presented <a href="http://www.gta.ufrj.br/ftp/gta/TechReports/CPCC16.pdf">here</a> and is ilustrated in Fig1. The devices used to implement each module of a sensing node are on the following table:</p>
+
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Device</th>
+        <th>Manufacturer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Controller</td>
+        <td>Arduino UNO R3</td>
+        <td>Arduino</td>
+      </tr>
+      <tr>
+        <td>GNSS Receiver</td>
+        <td>GS-96U7</td>
+        <td>Guangzhou Xintu</td>
+      </tr>
+      <tr>
+        <td>SD Card Interface</td>
+        <td>GS-96U7</td>
+        <td>Guangzhou Xintu</td>
+      </tr>
+      <tr>
+        <td>Wireless Interface</td>
+        <td>ESP8266</td>
+        <td>Espressif</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>The sensor bank of the current version of SensingBus has the following sensors:</p>
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Sensor</th>
+        <th>Device</th>
+        <th>Manufacturer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Humidity</td>
+        <td>DHT11</td>
+        <td>DFRobot</td>
+      </tr>
+      <tr>
+        <td>Temperature</td>
+        <td>DHT11</td>
+        <td>DFRobot</td>
+      </tr>
+      <tr>
+        <td>Light Intensity</td>
+        <td>GL5528</td>
+        <td>GBK Robotics</td>
+      </tr>
+      <tr>
+        <td>Rain Intensity</td>
+        <td>YL-38</td>
+        <td>100y</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-6">
+      <figure>
+        <img src="{% static 'img/sensing_node_pic.jpg' %}" alt="Sensing Node" class="img-responsive"/>
+        <figcaption>Fig2. - A sensor bank from a sensing node.</figcaption>
+      </figure>
+    </div>
+    <div class="col-md-3"></div>
+  </div>
+
+  <p>The Controller and Wireless Interface are programmable devices. In the folder "sensing" of the <a href="https://github.com/pedrocruz/sensing_bus">code repository</a>, the codes used to flash each of them can be found.</p>
+
+
+
+  <h3>The Flushing layer</h3>
+<!-- This section must explain what is the flushing layer. What are its tasks inside the environment. -->
+  <p>The Flushing layer allows a descentralized pre-processing of data from Sensing layer before data travels through the Internet.</p>
+  <p>The Flushing layer receives data from Sensing layer and analyzes the data. The Flushing layer discards defective data and accumulates data before sending it, to avoid control headers overhead. This layer also stablishes a secure channel with the Publishing layer and sends data to the Publishing node.</p>
+
+
+  <h4>The Flushing node</h4>
+  <p>Every Flushing node is responsible for the creation of an access point protected with WPA2. The access point is accessed by the Sensing nodes that have the shared key. The Flushing node also runs an HTTP server that receives data from the Sensing nodes that are connected to the access point created by the Flushing node. Data received is accumulated for a short amount of time.</p>
+
+  <p>To send data to the Publishing layer, the Flushing nodes behave as HTTPS client, verifying the server certificates and also sending their own certificates, so the Publishing node can verify them.</p>
+
+  <p>The devices used to implement the Publishing node are on the following table:</p>
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>Module</th>
+        <th>Device</th>
+        <th>Manufacturer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Controller</td>
+        <td>Raspberry Pi model B</td>
+        <td>Raspberry Pi Foundation</td>
+      </tr>
+      <tr>
+        <td>Wireless Interface</td>
+        <td>TL-WN722N</td>
+        <td>TP-LINK</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>In the folder "flushing" of the <a href="https://github.com/pedrocruz/sensing_bus">code repository</a>, all codes used in this layer can be found, along with installation instructions.</p>
+
+  <h3>The Publishing layer</h3>
+  <!-- This section must explain what is the publishing layer. What are its tasks inside the environment. -->
+  <p>The Publishing layer receives the data from Flushing layer and publishes the data to the users. Users can obtain data in two ways:</p>
+  <ul>
+    <li>Receiving data through an API;</li>
+    <li>Visualizing data on a map generated by a web service.</li>
+  </ul>
+
+  <p>The Publishing layer is implemented as a single Publishing node, explained in the following session.</p>
+
+  <h4>The Publishing node</h4>
+  <p>The Publishing Node is a web service powered by <a href="https://www.djangoproject.com/">Django</a>. The visualizing platform is implemented with <a href="http://getbootstrap.com/">Bootstrap</a> and with <a href="https://developers.google.com/maps/">Google Maps API</a>. The Publishing Node runs on a cloud platform, described on a <a href="http://www.gta.ufrj.br/ftp/gta/TechReports/CSB15.pdf">previous paper</a>.</p>
+
+  <h4>The Publishing API</h4>
+  <p>The publishing API offers the retrieval of measurements using filters. A user requests measurements with the HTTP GET method. The GET parameters are the filters applied to the data being queried. The possible filters are:</p>
+
+  <ul>
+    <li><b>bus_id</b>: Selects measurements from the bus identified by bus_id</li>
+    <li><b>start_time</b>: Selects measurements older than start_time</li>
+    <li><b>end_time</b>: Selects measurements newer than end_time</li>
+    <li><b>sensor_name</b>: Selects measurements from specified sensor</li>
+    <li><b>min_lat</b>: Selects measurements with latitudes bigger than min_lat</li>
+    <li><b>max_lat</b>: Selects measurements with latitudes smaller than max_lat</li>
+    <li><b>min_lng</b>: Selects measurements with longitudes bigger than min_lng</li>
+    <li><b>max_lng</b>: Selects measurements with longitudes smaller than max_lng</li>
+  </ul>
+<p>An example url is www.your-website.com/data?bus_id=123&sensor_name=temperature</p>
+
+  <h3>User's Manual</h3>
+  <p>To use the visualization tool, the user just needs access the url: <a href="https://sensingbus.gta.ufrj.br/visualize/">https://sensingbus.gta.ufrj.br/visualize/</a>. The user can select a filter and see this measures at the map.<p>
+
+  <h3>Instalation Manual</h3>
+  <p>To install the system, follow the instructions on the README.md located at every layer directory.<p>
+
 </div>
 {% endblock %}

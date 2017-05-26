@@ -3,12 +3,13 @@ from rest_framework import serializers
 from publisher.models import Measurement
 from publisher.models import Bus
 from publisher.models import Stop
+from publisher.models import SensingNode
 from datetime import datetime
 
 class MeasurementSerializer (serializers.ModelSerializer):
     class Meta:
         model = Measurement
-        fields = ('created_on', 'bus', 'stop', 'time', 'lat', 'lng', 'temperature', 'humidity', 'light', 'rain')
+        fields = ('created_on', 'bus', 'node', 'stop', 'time', 'lat', 'lng', 'temperature', 'humidity', 'light', 'rain')
 
 class MeasurementBatchSerializer (serializers.Serializer):
     node_id=serializers.IntegerField()
@@ -26,15 +27,20 @@ class MeasurementBatchSerializer (serializers.Serializer):
 
         for l in validated_data["load"]:
             data=l.split(",")
-            m = {}#Measurement.objects.create(
+            m = {}
             m['bus'] = b,
             m['time'] = datetime.strptime(data[column_names.index("datetime")],'%d%m%y%H%M%S00')
             m['lat'] = data[column_names.index("lat")]
             m['lng'] = data[column_names.index("lng")]
-            m['temperature'] = data[column_names.index("light")]
-            m['humidity'] = data[column_names.index("temperature")]
-            m['light'] = data[column_names.index("humidity")]
+            #m['temperature'] = data[column_names.index("light")]
+            #m['humidity'] = data[column_names.index("temperature")]
+            #m['light'] = data[column_names.index("humidity")]
+            #m['rain'] = data[column_names.index("rain")]
+            m['temperature'] = data[column_names.index("temperature")]
+            m['humidity'] = data[column_names.index("humidity")]
+            m['light'] = data[column_names.index("light")]
             m['rain'] = data[column_names.index("rain")]
+
             self.m_list.append(m)
         return validated_data
     
@@ -53,7 +59,7 @@ class MeasurementBatchSerializer (serializers.Serializer):
             )
             measurement.save()
         return
-        
+
     def update(self, instance, validated_data):
         return instance
 
@@ -65,14 +71,15 @@ class MeasurementBatchList (serializers.Serializer):
 
     def create(self, validated_data):
         s = Stop.objects.get(pk=validated_data["stop_id"])
-        print validated_data
         for batch in validated_data['batches']:
             column_names = batch["header"].split(",")
-            b = Bus.objects.get(pk=batch["node_id"])
+            n = SensingNode.objects.get(pk=batch["node_id"])
+            b = n.bus
             for l in batch["load"]:
                 data=l.split(",")
                 m = Measurement.objects.create(
                 bus = b,
+                node = n,
                 stop = s,
                 time = datetime.strptime(data[column_names.index("datetime")],
                                         '%d%m%y%H%M%S00'),

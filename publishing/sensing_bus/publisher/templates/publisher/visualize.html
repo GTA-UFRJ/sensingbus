@@ -13,13 +13,13 @@
 
 <div class ="container" style="height:87%; width:100%">
   <div class="row" style="height:100%; width:100%;">
-    <div class="col-md-8" id="map" style="height:500px; width:600px;">
+    <div class="col-md-8" id="map" style="height:604px; width:700px;">
     </div>
-    <div class="col-md-4" id="welcome-pane">
+    <div class="col-md-4 row-eq-height" id="welcome-pane">
       <div class="panel panel-primary">
         <!-- Default panel contents -->
         <div class="panel-heading">Search Measurements</div>
-        <div class="panel-body">
+        <div class="panel-body" style="height: 563px;">
           <div class="form-group">
 
             <form id="visualization-search" method="POST" class="form-horizontal">
@@ -51,15 +51,32 @@
                   {% endif %}
                   {% if field.field.widget.attrs.type == 'radio' %}
                 <fieldset class="form-group">
-                  <div class="col-xs-8 form-check">
-                      {% for option in field.field.choices %}
-                    <div class="radio">
-                      <label class="form-check-label">
-                        <input class="form-control form-check-input" type="radio" name="{{field.id_for_label}}" id="{{option.0}}" value="{{option.0}}">{{option.1}}
-                      </label>
-                    </div>
-                      {% endfor %}
+                  <div class="col-xs-12 form-check">
+                    <div>
+                      <script type="text/javascript">
+                        $(function(){
 
+                          $(".dropdown-menu li").click(function(){
+
+                            $("#sensor-list").html($(this).text()+ ' <span class="caret"></span>');
+                            $("#sensor-list").val($(this).text());
+                            console.log($(this).text());
+                            $("#id_sensor_name").val($(this).text());
+
+                         });
+
+                        });
+                      </script>
+                      <input type="hidden" name="sensor_name" value="Temperature" id="id_sensor_name">
+                      <button type="button" class="btn btn-default dropdown-toggle col-xs-12" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="sensor-list">
+                      Temperature <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu dropdown-menu-center">
+                      {% for option in field.field.choices %}
+                        <li><a>{{option.1}}</a></li>
+                      {% endfor %}
+                      </ul>
+                    </div>
                   </div>
                 </fieldset>
                   {% endif %}
@@ -73,6 +90,14 @@
         </div>
       </div> <!-- End Panel -->
     </div>
+  </div>
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8">
+      <p>Submiting the form with no filters will show the results unfiltered</p>
+      <p>Points on heatmap are responsive. Click them to view the measurements.</p>
+    </div>
+    <div class="col-md-2"></div>
   </div>
 </div>
 
