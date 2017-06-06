@@ -9,6 +9,7 @@ from publisher.models import Bus
 from django.http import JsonResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import BaseParser 
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from publisher.serializers import MeasurementSerializer
@@ -198,7 +199,7 @@ def measurement_batch_list(request):
     """
     if request.method == 'POST':
         #request.data has the compressed data
-        data = zlib.decompress(request.data)
+        data = zlib.decompress(request.body)
         data = data.decode('zlib_codec').decode('utf-8')
         data = json.loads(data)
         #Now data is a JSON and can be serialized

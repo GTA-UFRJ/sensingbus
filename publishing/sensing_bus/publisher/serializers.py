@@ -85,10 +85,14 @@ class MeasurementBatchList (serializers.Serializer):
                                         '%d%m%y%H%M%S00'),
                 lat = data[column_names.index("lat")],
                 lng = data[column_names.index("lng")],
-                temperature = data[column_names.index("light")],
-                humidity = data[column_names.index("temperature")],
-                light = data[column_names.index("humidity")],
-                rain = data[column_names.index("rain")])
+                #temperature = data[column_names.index("light")],
+                #humidity = data[column_names.index("temperature")],
+                #light = data[column_names.index("humidity")],
+                rain = data[column_names.index("rain")],
+                temperature = data[column_names.index("temperature")],
+                humidity = data[column_names.index("humidity")],
+                light = data[column_names.index("light")])
+
                 m.save()
         return validated_data
 

@@ -1,6 +1,8 @@
 ;
 // map center. Default is Cidade Nova
-var myLatlng = new google.maps.LatLng(-22.86557808, -43.22364807);
+//var myLatlng = new google.maps.LatLng(-22.86557808, -43.22364807);
+var myLatlng = new google.maps.LatLng(-1.45373, -48.49412);
+
 // map options,
 var myOptions = {
   zoom: 12,
