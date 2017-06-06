@@ -1,4 +1,6 @@
+from __future__ import unicode_literals
 import json
+import zlib
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -109,6 +111,16 @@ class JSONResponse(HttpResponse):
         kwargs['content_type'] = 'application/json'
         super(JSONResponse, self).__init__(content, **kwargs)
 
+class PlainTextParser(BaseParser):
+    """
+    A personalized parser to receive compressed data
+    """
+
+    media_type = 'text/plain'
+
+    def parse(self, stream, media_type=None, parser_context=None):
+        return stream.read()
+
 @csrf_exempt
 def measurement_list(request):
     """
@@ -185,7 +197,11 @@ def measurement_batch_list(request):
     List all code measurements batches, or create a new measurement batch.
     """
     if request.method == 'POST':
-        data = JSONParser().parse(request)
+        #request.data has the compressed data
+        data = zlib.decompress(request.data)
+        data = data.decode('zlib_codec').decode('utf-8')
+        data = json.loads(data)
+        #Now data is a JSON and can be serialized
         serializer = MeasurementBatchList(data=data)
         if serializer.is_valid():
             print "Saving"
@@ -193,4 +209,4 @@ def measurement_batch_list(request):
             return JSONResponse(serializer.data, status=201)
         return JSONResponse(serializer.errors, status=400)
     else:
-        return JSONResponse({'msg':'This endpoint is just for fun'},status=400)
+        return JSONResponse({'msg':'Only POSTs allowed'},status=400)
