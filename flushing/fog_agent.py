@@ -58,7 +58,6 @@ class S(BaseHTTPRequestHandler):
 
     def do_POST(self): 
         """Receives data from Arduino and sends to Cloud"""
-
         input_batches = {}
         post_size = int(self.headers['Content-Length'])
         print "Post size: {}".format(post_size)
