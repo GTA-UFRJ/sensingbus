@@ -47,7 +47,7 @@ def cloud_client(payload):
                     json=payload,
                     #verify=SERVER_CERTS,
                     cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
-    print r
+    print r.text
 
 class S(BaseHTTPRequestHandler):
     def _set_headers(self): 
@@ -58,29 +58,6 @@ class S(BaseHTTPRequestHandler):
 
     def do_POST(self): 
         """Receives data from Arduino and sends to Cloud"""
-
-    	input_batches = {}
-    	postvars = parse_qs(self.rfile.read(int(self.headers['Content-Length'])),
-                                            	keep_blank_values=1)
-    	input_batches['node_id'] = postvars['node_id'][0]
-    	for line in postvars['load']:
-        	tmp = line.split('\n')
-
-    	#delete data with defective date
-    	print 'received post'
-    	delete_list = []
-    	for i in range(len(tmp)):
-        	if (tmp[i][0:-1] == 0):
-            		delete_list.append(i)
-    	for i in reversed(delete_list):
-        	del tmp[i]
-                
-    	input_batches['type'] = str(postvars['type'][0])
-    	input_batches['header'] = str(postvars['header'][0])
-    	input_batches['received'] = str(datetime.datetime.now())
-    	input_batches['load'] = tmp[0:-1] #the last line is always empty 
-    	q.put(input_batches)
-    	return
 
         input_batches = {}
         post_size = int(self.headers['Content-Length'])
@@ -110,7 +87,8 @@ class S(BaseHTTPRequestHandler):
         input_batches['header'] = str(postvars['header'][0])
         input_batches['received'] = datetime.datetime.now().strftime("%d%m%y%H%M%S00")
         input_batches['load'] = tmp[0:-1] #the last line is always empty
-        #print "Load = {}".format(tmp[0:-1])
+        print "Received = {}".format(input_batches['received'])
+        
         q.put(input_batches)
         return
 
