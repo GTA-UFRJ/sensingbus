@@ -41,14 +41,16 @@ test_runs = 120 #maximum seconds test should take
 delay = 0.5
 filename = "stats{}".format(test_size)
 
-
 def get_stats(file):
 
     stats = {}
     stats['time_elapsed'] = last_received-first_received
     stats['bytes_received'] = bytes_received
-    stats['Average throughput'] = bytes_received/(last_received-first_received)
-    
+    if (last_received-first_received) > 0:
+        stats['average_throughput'] = bytes_received/(last_received-first_received)
+    else:
+        stats['average_throughput'] = 0
+
     stats['mem'] = psutil.virtual_memory()
     stats['cpu'] = psutil.cpu_times()
     stats['cpu_percent'] = psutil.cpu_percent()
@@ -56,19 +58,19 @@ def get_stats(file):
     pickle.dump(stats, file)
 
 def execute_tests():
+    runs = 0
     global posts_received
     with open(filename, 'wb') as f:
-        while(posts_received < 30*test_size or delay*2 < test_runs):
+        while(posts_received < 30*test_size and runs*2 < test_runs):
+            runs +=1
             get_stats(f)
-            #print "run{}".format(runs)
+            print "run{}".format(runs)
             time.sleep(delay)
-execute_tests()
-
 
 def send_thread(thread_name,q):
     """Sends periodically stored data"""
     while True:
-        #print "Time elapsed = {}".format(last_received-first_received)
+        print "Time elapsed = {}".format(last_received-first_received)
         #print "Bytes received = {}".format(bytes_received)
         #print "Average throughput = {}".format(bytes_received/(last_received-first_received))
         output = {}
@@ -155,11 +157,13 @@ def run(server_class=HTTPServer, handler_class=S, port=50000):
     httpd = server_class(server_address, handler_class)
     print 'Starting Server Http'
     t = threading.Thread( target = send_thread, args=('alt',q))
+    u = threading.Thread( target = execute_tests, args=())
     t.daemon = True
+    u.deamon = True
     t.start()
+    u.start()
     httpd.serve_forever()
     t.join()
 
 if __name__ == "__main__":
     run()
-    execute_tests()
