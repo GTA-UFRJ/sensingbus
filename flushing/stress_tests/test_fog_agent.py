@@ -14,6 +14,8 @@ import requests
 import time
 import datetime
 import threading, Queue
+import psutil
+import cPickle as pickle
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -56,7 +58,7 @@ def get_stats(file):
 def execute_tests():
     global posts_received
     with open(filename, 'wb') as f:
-        while(posts_received < 30*test_size || delay*2 < test_runs):
+        while(posts_received < 30*test_size or delay*2 < test_runs):
             get_stats(f)
             #print "run{}".format(runs)
             time.sleep(delay)
