@@ -105,6 +105,8 @@ class S(BaseHTTPRequestHandler):
         global bytes_received
         global last_received
         global first
+        global posts_received
+        
         input_batches = {}
         post_size = int(self.headers['Content-Length'])
 
