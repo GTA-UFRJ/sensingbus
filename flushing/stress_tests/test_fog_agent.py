@@ -45,6 +45,7 @@ def get_stats(file):
 
     stats = {}
     stats['time_elapsed'] = last_received-first_received
+    stats['posts_received'] = posts_received
     stats['bytes_received'] = bytes_received
     if (last_received-first_received) > 0:
         stats['average_throughput'] = bytes_received/(last_received-first_received)
@@ -71,8 +72,9 @@ def send_thread(thread_name,q):
     """Sends periodically stored data"""
     while True:
         print "Time elapsed = {}".format(last_received-first_received)
-        #print "Bytes received = {}".format(bytes_received)
-        #print "Average throughput = {}".format(bytes_received/(last_received-first_received))
+        print "Bytes received = {}".format(bytes_received)
+        print "Average throughput = {}".format(bytes_received/(last_received-first_received))
+        print "Posts received = {}".format(posts_received)
         output = {}
         output['stop_id'] = STOP_ID
         output['batches'] = []
@@ -90,7 +92,7 @@ def cloud_client(payload):
                     json=payload,
                     #verify=SERVER_CERTS,
                     cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
-    print r.text
+    #print r.text
 
 class S(BaseHTTPRequestHandler):
 
@@ -121,7 +123,7 @@ class S(BaseHTTPRequestHandler):
         if postvars['load'][0][-1] == '\n':
             postvars['load'] = [postvars['load'][0][0:-1]]
 
-        #print "postvars load = {}".format(postvars['load'])
+        print "postvars load = {}".format(postvars['load'])
 
         for line in postvars['load']:
             tmp = line.split('\n')
@@ -146,6 +148,7 @@ class S(BaseHTTPRequestHandler):
         last_received = time.time()
         
         if first:
+            print "First"
             first_received = time.time()
             first = False
         
@@ -163,7 +166,7 @@ def run(server_class=HTTPServer, handler_class=S, port=50000):
     t.daemon = True
     u.deamon = True
     t.start()
-    u.start()
+    #u.start()
     httpd.serve_forever()
     t.join()
 
