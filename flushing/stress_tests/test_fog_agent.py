@@ -31,14 +31,44 @@ first = True
 first_received = time.time()
 last_received = time.time()
 bytes_received = 0
-#posts_received = {}
+posts_received = 0
+
+
+test_size = 1 #Number of gathering nodes involved
+test_runs = 120 #maximum seconds test should take
+delay = 0.5
+filename = "stats{}".format(test_size)
+
+
+def get_stats(file):
+
+    stats = {}
+    stats['time_elapsed'] = last_received-first_received
+    stats['bytes_received'] = bytes_received
+    stats['Average throughput'] = bytes_received/(last_received-first_received)
+    
+    stats['mem'] = psutil.virtual_memory()
+    stats['cpu'] = psutil.cpu_times()
+    stats['cpu_percent'] = psutil.cpu_percent()
+    stats['network'] = psutil.net_io_counters(pernic=True)
+    pickle.dump(stats, file)
+
+def execute_tests():
+    global posts_received
+    with open(filename, 'wb') as f:
+        while(posts_received < 30*test_size || delay*2 < test_runs):
+            get_stats(f)
+            #print "run{}".format(runs)
+            time.sleep(delay)
+execute_tests()
+
 
 def send_thread(thread_name,q):
     """Sends periodically stored data"""
     while True:
-        print "Time elapsed = {}".format(last_received-first_received)
-        print "Bytes received = {}".format(bytes_received)
-        print "Average throughput = {}".format(bytes_received/(last_received-first_received))
+        #print "Time elapsed = {}".format(last_received-first_received)
+        #print "Bytes received = {}".format(bytes_received)
+        #print "Average throughput = {}".format(bytes_received/(last_received-first_received))
         output = {}
         output['stop_id'] = STOP_ID
         output['batches'] = []
@@ -47,7 +77,7 @@ def send_thread(thread_name,q):
                 b = q.get()
                 if ( b is not None):
                     output['batches'].append(b)
-            cloud_client(output)    
+            cloud_client(output)
         time.sleep(30)
 
 def cloud_client(payload):
@@ -79,20 +109,17 @@ class S(BaseHTTPRequestHandler):
         postvars = parse_qs(self.rfile.read(post_size),
                                                 keep_blank_values=1)
         input_batches['node_id'] = postvars['node_id'][0]
-
-        #posts_received[input_batches['node_id'] = posts_received.get(input_batches['node_id'], 0) + 1
+        posts_received += 1
 
         #print "postvars load = {}".format(postvars['load'])
         if postvars['load'][0][-1] == '\n':
-            print "deu merda"
             postvars['load'] = [postvars['load'][0][0:-1]]
 
-        print "postvars load = {}".format(postvars['load'])
+        #print "postvars load = {}".format(postvars['load'])
 
         for line in postvars['load']:
             tmp = line.split('\n')
 
-        #delete data with defective date
         delete_list = []
         for i in range(len(tmp)):
             #print "tmp[{}] = {}".format(i, tmp[i])
@@ -102,7 +129,7 @@ class S(BaseHTTPRequestHandler):
             except ValueError:
                 delete_list.append(i)
         for i in reversed(delete_list):
-            print "deleting deffective date {}".format(tmp[i])
+            #print "deleting deffective date {}".format(tmp[i])
             del tmp[i]
                    
         input_batches['type'] = str(postvars['type'][0])
@@ -133,3 +160,4 @@ def run(server_class=HTTPServer, handler_class=S, port=50000):
 
 if __name__ == "__main__":
     run()
+    execute_tests()
