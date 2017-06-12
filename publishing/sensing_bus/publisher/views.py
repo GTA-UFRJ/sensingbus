@@ -198,6 +198,22 @@ def measurement_batch_list(request):
     List all code measurements batches, or create a new measurement batch.
     """
     if request.method == 'POST':
+        data = JSONParser().parse(request)
+        serializer = MeasurementBatchList(data=data)
+        if serializer.is_valid():
+            print "Saving"
+            serializer.save()
+            return JSONResponse(serializer.data, status=201)
+        return JSONResponse(serializer.errors, status=400)
+    else:
+        return JSONResponse({'msg':'Only POSTs allowed'},status=400)
+
+@csrf_exempt
+def zip_measurement_batch_list(request):
+    """
+    List all code measurements batches, or create a new measurement batch.
+    """
+    if request.method == 'POST':
         #request.data has the compressed data
         data = zlib.decompress(request.body)
         data = data.decode('zlib_codec').decode('utf-8')
