@@ -35,6 +35,7 @@ last_received = time.time()
 bytes_received = 0
 posts_received = 0
 
+posts = {}
 
 test_size = 1 #Number of gathering nodes involved
 test_runs = 120 #maximum seconds test should take
@@ -44,7 +45,9 @@ filename = "stats{}".format(test_size)
 def get_stats(file):
 
     stats = {}
-    stats['time_elapsed'] = last_received-first_received
+    stats['time'] = time.time()
+    stats['last_received'] = last_received
+    stats['first_received'] = first_received
     stats['posts_received'] = posts_received
     stats['bytes_received'] = bytes_received
     if (last_received-first_received) > 0:
@@ -75,6 +78,8 @@ def send_thread(thread_name,q):
         print "Bytes received = {}".format(bytes_received)
         print "Average throughput = {}".format(bytes_received/(last_received-first_received))
         print "Posts received = {}".format(posts_received)
+        for i in posts:
+            print "Node {} posts: {}".format(i, posts[i])
         output = {}
         output['stop_id'] = STOP_ID
         output['batches'] = []
@@ -84,7 +89,7 @@ def send_thread(thread_name,q):
                 if ( b is not None):
                     output['batches'].append(b)
             cloud_client(output)
-        time.sleep(30)
+        time.sleep(10)
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
@@ -108,6 +113,7 @@ class S(BaseHTTPRequestHandler):
         global last_received
         global first
         global posts_received
+        global posts
         
         input_batches = {}
         post_size = int(self.headers['Content-Length'])
@@ -118,12 +124,12 @@ class S(BaseHTTPRequestHandler):
                                                 keep_blank_values=1)
         input_batches['node_id'] = postvars['node_id'][0]
         posts_received += 1
-
+        posts[input_batches['node_id']] = posts.get(input_batches['node_id'], 0) + 1
         #print "postvars load = {}".format(postvars['load'])
         if postvars['load'][0][-1] == '\n':
             postvars['load'] = [postvars['load'][0][0:-1]]
 
-        print "postvars load = {}".format(postvars['load'])
+        #print "postvars load = {}".format(postvars['load'])
 
         for line in postvars['load']:
             tmp = line.split('\n')

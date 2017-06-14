@@ -12,4 +12,4 @@ with open(filename, "rb") as f:
             break
 
 #results now has all the results
-print results
+#print results
