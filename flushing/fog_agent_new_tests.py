@@ -15,7 +15,6 @@ import time
 import datetime
 import threading, Queue
 import sys
-import controller2
 import Module
 
 signal(SIGPIPE, SIG_DFL)
@@ -71,14 +70,14 @@ class S(BaseHTTPRequestHandler):
 
 	module = Module.module(tmp)
 	module.controller()
-	cloud_client(module.get_payload())
 		
 		                
-    	#input_batches['type'] = str(postvars['type'][0])
-    	#input_batches['header'] = str(postvars['header'][0])
-    	#input_batches['received'] = str(datetime.datetime.now())
+    	input_batches['type'] = str(postvars['type'][0])
+    	input_batches['header'] = str(postvars['header'][0])
+    	input_batches['received'] = str(datetime.datetime.now())
     	#input_batches['load'] = tmp[0:-1] #the last line is always empty 
-    	#q.put(input_batches)
+	input_batches['load'] = module.get_payload()[0]
+    	q.put(input_batches)
     	return
 
 def run(server_class=HTTPServer, handler_class=S, port=50000):
