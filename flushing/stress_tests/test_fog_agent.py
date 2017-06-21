@@ -57,7 +57,7 @@ except (ValueError):
 filename = join(results_dir, str(test_run))
 
 def get_stats():
-    if first:
+    if !first:
         stats = {}
         stats['time'] = time.time()
         stats['last_received'] = last_received
