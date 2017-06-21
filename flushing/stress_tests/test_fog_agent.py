@@ -48,12 +48,11 @@ delay = 0.05 #Delay of each measurement
 results_dir = join("results", str(test_size))
 
 files = [f for f in listdir(results_dir) if isfile(join(results_dir, f))]
-elapsed_runs = [int(x) for x in files]
-print "This run = {}".format(max(elapsed_runs)+1)
-try:
-    test_run = max(elapsed_runs) + 1
-except (ValueError):
+if files:
+    test_run = max([int(x) for x in files]) + 1
+else:
     test_run = 0
+print "This run = {}".format(test_run)
 filename = join(results_dir, str(test_run))
 
 def get_stats():
