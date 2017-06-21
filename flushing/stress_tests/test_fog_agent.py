@@ -1,4 +1,4 @@
-#Author: Roberto Goncalves Pacheco
+#Authors: Roberto Goncalves Pacheco
 #Universidade do Estado do Rio de Janeiro
 #Departamento de Eletronica e Telecomunicacoes
 #Project: Sensing Bus
@@ -17,6 +17,8 @@ import threading, Queue
 import psutil
 import cPickle as pickle
 import zlib
+from os import listdir
+from os.path import isfile, join
 
 signal(SIGPIPE, SIG_DFL)
 
@@ -41,12 +43,20 @@ posts_received = 0
 posts = {}
 
 test_size = 1 #Number of gathering nodes involved
-test_runs = 120 #maximum seconds test should take
-delay = 0.5
-filename = "stats{}".format(test_size)
+posts_per_client = 15 #Number of posts each gathering node makes
+delay = 0.05 #Delay of each measurement
+results_dir = join("results", str(test_size))
 
-def get_stats(file):
+files = [f for f in listdir(results_dir) if isfile(join(results_dir, f))]
+elapsed_runs = [int(x) for x in files]
+print elapsed_runs
+try:
+    test_run = max(elapsed_runs) + 1
+except (ValueError):
+    test_run = 0
+filename = join(results_dir, str(test_run))
 
+def get_stats():
     stats = {}
     stats['time'] = time.time()
     stats['last_received'] = last_received
@@ -57,29 +67,27 @@ def get_stats(file):
         stats['average_throughput'] = bytes_received/(last_received-first_received)
     else:
         stats['average_throughput'] = 0
-
     stats['mem'] = psutil.virtual_memory()
     stats['cpu'] = psutil.cpu_times()
     stats['cpu_percent'] = psutil.cpu_percent()
     stats['network'] = psutil.net_io_counters(pernic=True)
-    pickle.dump(stats, file)
-
-def execute_tests():
-    runs = 0
-    global posts_received
     with open(filename, 'wb') as f:
-        while(posts_received < 30*test_size and runs*2 < test_runs):
-            runs +=1
-            get_stats(f)
-            print "run{}".format(runs)
-            time.sleep(delay)
+        pickle.dump(stats, f)
 
-def send_thread(thread_name,q):
+def execute_tests(run_event):
+    while run_event.is_set():
+        get_stats()
+        time.sleep(delay)
+
+def send_thread(thread_name,q, run_event):
     """Sends periodically stored data"""
-    while True:
+    while run_event.is_set():
         print "Time elapsed = {}".format(last_received-first_received)
         print "Bytes received = {}".format(bytes_received)
-        print "Average throughput = {}".format(bytes_received/(last_received-first_received))
+        if (last_received-first_received) > 0:
+            print "Average throughput = {}".format(bytes_received/(last_received-first_received))
+        else:
+            print "Average throughput = {}".format(0)
         print "Posts received = {}".format(posts_received)
         for i in posts:
             print "Node {} posts: {}".format(i, posts[i])
@@ -135,8 +143,6 @@ class S(BaseHTTPRequestHandler):
         if postvars['load'][0][-1] == '\n':
             postvars['load'] = [postvars['load'][0][0:-1]]
 
-        #print "postvars load = {}".format(postvars['load'])
-
         for line in postvars['load']:
             tmp = line.split('\n')
 
@@ -158,12 +164,12 @@ class S(BaseHTTPRequestHandler):
         input_batches['load'] = tmp
         #print "Received = {}".format(input_batches['received'])
         last_received = time.time()
-        
+
         if first:
             print "First"
             first_received = time.time()
             first = False
-        
+
         q.put(input_batches)
         return
 
@@ -172,15 +178,24 @@ def run(server_class=HTTPServer, handler_class=S, port=50000):
     """Generates a server to receive POST method"""
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
-    print 'Starting Server Http'
-    t = threading.Thread( target = send_thread, args=('alt',q))
-    u = threading.Thread( target = execute_tests, args=())
+    print 'Starting Watch Thread'
+    run_event = threading.Event()
+    run_event.set()
+    t = threading.Thread( target = send_thread, args=('alt',q, run_event))
+    u = threading.Thread( target = execute_tests, args=(run_event,))
     t.daemon = True
     u.deamon = True
     t.start()
-    #u.start()
-    httpd.serve_forever()
-    t.join()
+    u.start()
+    try:
+        print 'Starting Server Http'
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print "attempting to close threads"
+        run_event.clear()
+        t.join()
+        u.join()
+        print "threads successfully closed"
 
 if __name__ == "__main__":
     run()
