@@ -72,7 +72,6 @@ def get_stats():
     stats['cpu_percent'] = psutil.cpu_percent()
     stats['network'] = psutil.net_io_counters(pernic=True)
     with open(filename, 'ab') as f:
-        print "Writing file"
         pickle.dump(stats, f)
 
 def execute_tests(run_event):
