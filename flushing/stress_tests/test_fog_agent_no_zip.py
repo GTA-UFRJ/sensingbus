@@ -22,9 +22,9 @@ signal(SIGPIPE, SIG_DFL)
 
 #SERVER_CERTS = '/home/pi/ssl/ca-chain.cert.pem' #To verify server
 STOP_ID = 1 #This raspberrie's id
-#MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/' #Endpoint of insertion api
-MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/zip_measurements_batch_sec/' #Endpoint of insertion api
-COMPRESSION_LEVEL = 9
+MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/measurements_batch_sec/' #Endpoint of insertion api
+#MEASUREMENTS_URL = 'https://sensingbus.gta.ufrj.br/zip_measurements_batch_sec/' #Endpoint of insertion api
+COMPRESSION_LEVEL = 0
 
 # Variables for server-side validation:
 PRIMARY_KEY='/home/pi/ssl/raspberry.key.pem'
@@ -96,14 +96,14 @@ def send_thread(thread_name,q):
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
-    payload = zlib.compress(json.dumps(payload).encode('utf-8').encode('zlib_codec'), COMPRESSION_LEVEL)
+    #payload = zlib.compress(json.dumps(payload).encode('utf-8').encode('zlib_codec'), COMPRESSION_LEVEL)
     r = requests.post(MEASUREMENTS_URL,
-                    	data=payload,
-                        #json=payload,
-                        headers={'Content-Encoding':'text/plain'},
+                    	#data=payload,
+                        json=payload,
+                        #headers={'Content-Encoding':'text/plain'},
                     #verify=SERVER_CERTS,
                     cert=(LOCAL_CERTIFICATE, PRIMARY_KEY))
-    #print r.json
+    print r.json
 
 class S(BaseHTTPRequestHandler):
 
