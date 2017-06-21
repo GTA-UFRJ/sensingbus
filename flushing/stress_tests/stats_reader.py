@@ -1,5 +1,5 @@
 import cPickle as pickle
-import numpy as np, scipy.stats as st
+#import numpy as np, scipy.stats as st
 from os import listdir
 from os.path import isfile, join
 
@@ -74,10 +74,10 @@ for test_size in test_sizes:
             print "Mem Usage = {}".format(tmp_mem_usage)
             print "Avg Throughput = {}".format(tmp_avg_throughput)
 
-            cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
-            mem_usage[test_size].append(np.mean(tmp_mem_usage))
+            #cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
+            #mem_usage[test_size].append(np.mean(tmp_mem_usage))
             #net_usage[test_size].append(np.mean(control_packets))
-            avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
+            #avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
 
 
     print "CPU Usage = {}".format(cpu_usage)
