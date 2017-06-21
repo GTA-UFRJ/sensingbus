@@ -1,5 +1,5 @@
 import cPickle as pickle
-#import numpy as np, scipy.stats as st
+import numpy as np, scipy.stats as st
 from os import listdir
 from os.path import isfile, join
 
@@ -65,21 +65,24 @@ for test_size in test_sizes:
                     tmp_mem_usage.append(r['mem'].percent)
                     #tmp_net_usage.append(r['wlan0'].dropin + r['wlan0'].dropout)
                     tmp_avg_throughput.append(r['average_throughput'])
+                    if r['average_throughput'] > 10000:
+                        print "abnormal Throughput on file {}: {}".format(filename,
+                            r['average_throughput'])
 
             print "CPU Usage = {}".format(tmp_cpu_usage)
             print "Mem Usage = {}".format(tmp_mem_usage)
             print "Avg Throughput = {}".format(tmp_avg_throughput)
 
-            #cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
-            #mem_usage[test_size].append(np.mean(tmp_mem_usage))
+            cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
+            mem_usage[test_size].append(np.mean(tmp_mem_usage))
             #net_usage[test_size].append(np.mean(control_packets))
-            #avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
+            avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
 
 
     print "CPU Usage = {}".format(cpu_usage)
     print "Mem Usage = {}".format(mem_usage)
     print "Avg Throughput = {}".format(avg_throughput)
-"""
+
     #Calculating avg and confidence for a certain test size
     total_cpu_usage.append(np.mean(cpu_usage[test_size]))
     confidence = st.t.interval(0.95,
@@ -95,12 +98,12 @@ for test_size in test_sizes:
         scale=st.sem(mem_usage[test_size]))
     total_mem_usage_err.append(confidence[1] - confidence[0])
 
-    total_net_usage.append(np.mean(net_usage[test_size]))
+    """total_net_usage.append(np.mean(net_usage[test_size]))
     confidence = st.t.interval(0.95,
         len(net_usage[test_size])-1,
         loc=np.mean(net_usage[test_size]),
         scale=st.sem(net_usage[test_size]))
-    total_net_usage_err.append(confidence[1] - confidence[0])
+    total_net_usage_err.append(confidence[1] - confidence[0])"""
 
     total_avg_throughput.append(np.mean(avg_throughput[test_size]))
     confidence = st.t.interval(0.95,
@@ -108,6 +111,6 @@ for test_size in test_sizes:
         loc=np.mean(avg_throughput[test_size]),
         scale=st.sem(avg_throughput[test_size]))
     total_avg_throughput_err.append(confidence[1] - confidence[0])
-"""
+
 #results now has all the results
 #print results

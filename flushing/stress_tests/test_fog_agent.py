@@ -57,22 +57,23 @@ except (ValueError):
 filename = join(results_dir, str(test_run))
 
 def get_stats():
-    stats = {}
-    stats['time'] = time.time()
-    stats['last_received'] = last_received
-    stats['first_received'] = first_received
-    stats['posts_received'] = posts_received
-    stats['bytes_received'] = bytes_received
-    if (last_received-first_received) > 0:
-        stats['average_throughput'] = bytes_received/(last_received-first_received)
-    else:
-        stats['average_throughput'] = 0
-    stats['mem'] = psutil.virtual_memory()
-    stats['cpu'] = psutil.cpu_times()
-    stats['cpu_percent'] = psutil.cpu_percent()
-    stats['network'] = psutil.net_io_counters(pernic=True)
-    with open(filename, 'ab') as f:
-        pickle.dump(stats, f)
+    if first:
+        stats = {}
+        stats['time'] = time.time()
+        stats['last_received'] = last_received
+        stats['first_received'] = first_received
+        stats['posts_received'] = posts_received
+        stats['bytes_received'] = bytes_received
+        if (last_received-first_received) > 0:
+            stats['average_throughput'] = bytes_received/(last_received-first_received)
+        else:
+            stats['average_throughput'] = 0
+        stats['mem'] = psutil.virtual_memory()
+        stats['cpu'] = psutil.cpu_times()
+        stats['cpu_percent'] = psutil.cpu_percent()
+        stats['network'] = psutil.net_io_counters(pernic=True)
+        with open(filename, 'ab') as f:
+            pickle.dump(stats, f)
 
 def execute_tests(run_event):
     while run_event.is_set():
