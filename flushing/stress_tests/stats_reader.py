@@ -3,7 +3,7 @@ import numpy as np, scipy.stats as st
 from os import listdir
 from os.path import isfile, join
 
-test_sizes = [1]#, 5, 10, 15, 20] #Number of gathering nodes involved
+test_sizes = [1, 5]#, 10, 15, 20] #Number of gathering nodes involved
 
 results_dir = "results"
 
@@ -52,9 +52,9 @@ for test_size in test_sizes:
                         last_received = r['last_received']
                 except EOFError:
                     break
-            print "First received = {}".format(first_received)
-            print "Last received = {}".format(last_received)
-            print "Number of measurements = {}".format(len(results))
+            #print "First received = {}".format(first_received)
+            #print "Last received = {}".format(last_received)
+            #print "Number of measurements = {}".format(len(results))
             tmp_cpu_usage = []
             tmp_mem_usage = []
             tmp_net_usage = []
@@ -65,13 +65,13 @@ for test_size in test_sizes:
                     tmp_mem_usage.append(r['mem'].percent)
                     #tmp_net_usage.append(r['wlan0'].dropin + r['wlan0'].dropout)
                     tmp_avg_throughput.append(r['average_throughput'])
-                    if r['average_throughput'] > 10000:
+                    if r['average_throughput'] > 1000000:
                         print "abnormal Throughput on file {}: {}".format(filename,
                             r['average_throughput'])
 
-            print "CPU Usage = {}".format(tmp_cpu_usage)
-            print "Mem Usage = {}".format(tmp_mem_usage)
-            print "Avg Throughput = {}".format(tmp_avg_throughput)
+            #print "CPU Usage = {}".format(tmp_cpu_usage)
+            #print "Mem Usage = {}".format(tmp_mem_usage)
+            #print "Avg Throughput = {}".format(tmp_avg_throughput)
 
             cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
             mem_usage[test_size].append(np.mean(tmp_mem_usage))
@@ -79,9 +79,9 @@ for test_size in test_sizes:
             avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
 
 
-    print "CPU Usage = {}".format(cpu_usage)
-    print "Mem Usage = {}".format(mem_usage)
-    print "Avg Throughput = {}".format(avg_throughput)
+    #print "CPU Usage = {}".format(cpu_usage)
+    #print "Mem Usage = {}".format(mem_usage)
+    #print "Avg Throughput = {}".format(avg_throughput)
 
     #Calculating avg and confidence for a certain test size
     total_cpu_usage.append(np.mean(cpu_usage[test_size]))
@@ -112,5 +112,11 @@ for test_size in test_sizes:
         scale=st.sem(avg_throughput[test_size]))
     total_avg_throughput_err.append(confidence[1] - confidence[0])
 
+print "CPU = {}".format(total_cpu_usage)
+print "CPUerr = {}".format(total_cpu_usage_err)
+print "Mem = {}".format(total_mem_usage)
+print "MemErr = {}".format(total_mem_usage_err)
+print "Throughput = {}".format(total_avg_throughput)
+print "ThroughputErr = {}".format(total_avg_throughput_err)
 #results now has all the results
 #print results
