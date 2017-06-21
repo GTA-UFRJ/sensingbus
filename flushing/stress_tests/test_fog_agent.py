@@ -71,7 +71,8 @@ def get_stats():
     stats['cpu'] = psutil.cpu_times()
     stats['cpu_percent'] = psutil.cpu_percent()
     stats['network'] = psutil.net_io_counters(pernic=True)
-    with open(filename, 'wb') as f:
+    with open(filename, 'ab') as f:
+        print "Writing file"
         pickle.dump(stats, f)
 
 def execute_tests(run_event):
@@ -100,7 +101,7 @@ def send_thread(thread_name,q, run_event):
                 if ( b is not None):
                     output['batches'].append(b)
             cloud_client(output)
-        time.sleep(10)
+        time.sleep(5)
 
 def cloud_client(payload):
     """ Sends mensage to Cloud"""
