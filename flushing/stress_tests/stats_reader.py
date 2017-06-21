@@ -11,6 +11,7 @@ net_usage = {}
 avg_throughput = {}
 #bytes_received = {}
 
+
 total_cpu_usage = []
 total_mem_usage = []
 total_net_usage = []
