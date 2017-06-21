@@ -54,7 +54,7 @@ for test_size in test_sizes:
                     break
             print "First received = {}".format(first_received)
             print "Last received = {}".format(last_received)
-            print "Number of measurements = {}".format(len(r))
+            print "Number of measurements = {}".format(len(results))
             tmp_cpu_usage = []
             tmp_mem_usage = []
             tmp_net_usage = []
