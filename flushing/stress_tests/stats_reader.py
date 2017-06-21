@@ -60,10 +60,6 @@ for test_size in test_sizes:
             tmp_net_usage = []
             tmp_avg_throughput = []
             for r in results:
-                if r['time'] > first_received:
-                    print "time greater than first received"
-                if r['time'] < last_received:
-                    print "time smaller than last received"
                 if r['time'] > first_received and r['time'] < last_received:
                     tmp_cpu_usage.append(r['cpu_percent'])
                     tmp_mem_usage.append(r['mem'].percent)
