@@ -42,14 +42,14 @@ posts_received = 0
 
 posts = {}
 
-test_size = 1 #Number of gathering nodes involved
+test_size = 10 #Number of gathering nodes involved
 posts_per_client = 15 #Number of posts each gathering node makes
 delay = 0.05 #Delay of each measurement
 results_dir = join("results", str(test_size))
 
 files = [f for f in listdir(results_dir) if isfile(join(results_dir, f))]
 elapsed_runs = [int(x) for x in files]
-print elapsed_runs
+print "This run = {}".format(max(elapsed_runs)+1)
 try:
     test_run = max(elapsed_runs) + 1
 except (ValueError):
