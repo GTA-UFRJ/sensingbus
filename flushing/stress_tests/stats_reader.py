@@ -1,9 +1,11 @@
 import cPickle as pickle
-import numpy as np
+import numpy as np, scipy.stats as st
 from os import listdir
 from os.path import isfile, join
 
-test_sizes = [1, 5, 10, 15, 20] #Number of gathering nodes involved
+test_sizes = [1]#, 5, 10, 15, 20] #Number of gathering nodes involved
+
+results_dir = "results"
 
 cpu_usage = {}
 mem_usage = {}
@@ -22,8 +24,8 @@ total_net_usage_err = []
 total_avg_throughput_err = []
 
 for test_size in test_sizes:
-    results_dir = join("results", str(test_size))
-    files = [f for f in listdir(results_dir) if isfile(join(results_dir, f))]
+    tests_dir = join(results_dir, str(test_size))
+    files = [f for f in listdir(tests_dir) if isfile(join(tests_dir, f))]
 
     cpu_usage[test_size] = []
     mem_usage[test_size] = []
@@ -37,33 +39,51 @@ for test_size in test_sizes:
         first_received = 0
         last_received = 0
 
-        with open(filename, "rb") as f:
+        with open(join(tests_dir, filename), "rb") as f:
             #Collecting data and discovering the time interval when tests happened
             while True:
                 try:
                     r = pickle.load(f)
                     results.append(r)
+                    #print r
                     if r['first_received'] > first_received:
                         first_received = r['first_received']
                     if r['last_received'] > last_received:
                         last_received = r['last_received']
                 except EOFError:
                     break
+            print "First received = {}".format(first_received)
+            print "Last received = {}".format(last_received)
+            print "Number of measurements = {}".format(len(r))
             tmp_cpu_usage = []
             tmp_mem_usage = []
             tmp_net_usage = []
             tmp_avg_throughput = []
             for r in results:
+                if r['time'] > first_received:
+                    print "time greater than first received"
+                if r['time'] < last_received:
+                    print "time smaller than last received"
                 if r['time'] > first_received and r['time'] < last_received:
                     tmp_cpu_usage.append(r['cpu_percent'])
-                    tmp_mem_usage.append(r['virtual_memory'].percent)
+                    tmp_mem_usage.append(r['mem'].percent)
                     #tmp_net_usage.append(r['wlan0'].dropin + r['wlan0'].dropout)
                     tmp_avg_throughput.append(r['average_throughput'])
+
+            print "CPU Usage = {}".format(tmp_cpu_usage)
+            print "Mem Usage = {}".format(tmp_mem_usage)
+            print "Avg Throughput = {}".format(tmp_avg_throughput)
+
             cpu_usage[test_size].append(np.mean(tmp_cpu_usage))
             mem_usage[test_size].append(np.mean(tmp_mem_usage))
             #net_usage[test_size].append(np.mean(control_packets))
             avg_throughput[test_size].append(np.mean(tmp_avg_throughput))
 
+
+    print "CPU Usage = {}".format(cpu_usage)
+    print "Mem Usage = {}".format(mem_usage)
+    print "Avg Throughput = {}".format(avg_throughput)
+"""
     #Calculating avg and confidence for a certain test size
     total_cpu_usage.append(np.mean(cpu_usage[test_size]))
     confidence = st.t.interval(0.95,
@@ -92,6 +112,6 @@ for test_size in test_sizes:
         loc=np.mean(avg_throughput[test_size]),
         scale=st.sem(avg_throughput[test_size]))
     total_avg_throughput_err.append(confidence[1] - confidence[0])
-
+"""
 #results now has all the results
 #print results
