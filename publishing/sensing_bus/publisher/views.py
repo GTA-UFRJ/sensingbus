@@ -17,6 +17,8 @@ from publisher.serializers import MeasurementBatchList
 
 from .forms import VisualizeForm
 
+MAX_MEASURES = 500
+
 def index(request):
     context = {}
     return render(request, 'publisher/index.html', context)
@@ -68,7 +70,7 @@ def visualize(request):
 
         data = {'data' : []}
         values = []
-        for o in q[:500]: #This value avoids that too many results overflow the browser
+        for o in q[:MAX_MEASURES]: #This value avoids that too many results overflow the browser
             d = {}
             d['bus'] = o.bus.name
             d['lat'] = float(o.lat)
@@ -138,7 +140,7 @@ def measurement_list(request):
         start_time = request.GET.get("start_time", "")
         end_time = request.GET.get("end_time", "")
 
-        q = Measurement.objects.all()
+        q = Measurement.objects.all()[:MAX_MEASURES]
 
         if bus_name:
             bus_key = Bus.objects.filter(name__iexact=bus_name).first().pk
