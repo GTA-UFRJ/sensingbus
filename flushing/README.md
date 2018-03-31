@@ -122,6 +122,7 @@ Step 4.2) Edit the file /etc/network/interfaces in your favorite text editor. Th
 Step 1) Create a new file by running the command:
 		
 		sudo nano /etc/hotsapd/hostapd.conf
+		
 Step 2) Paste the following lines in this new file:
 
 		interface=wlan0
@@ -152,15 +153,7 @@ Find the line:
 Edit it to say :
 		
 		DAEMON_CONF="/etc/hostapd/hostapd.conf" 
-Step 5) Run that command to edit the file /etc/default/hostapd.
 
-Find the line:
-		
-		DAEMON_CONF= 
-
-Edit it to say :
-		
-		DAEMON_CONF=/etc/hostapd/hostapd.conf
 
 ### Configure Network Address Translation
 
