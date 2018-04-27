@@ -3,28 +3,30 @@
 *Universidade Federal do Rio de Janeiro
 *Departamento de Engenharia Eletrica
 *Project: Sensing Bus
-*Subject: The sensing layer wifi module
+*Subject: The sensing layer controller module
 *********************************
-To be flashed to an ESP8266.
+To be flashed to an Arduino.
 
-This software receives data from the Controller and sends it over to the Flushing layer.
+This software reads data from the sensors and sends it to the Wireless Interface.
 
 */
 
-//Cabo 8 vias
-//Função        COLOR Arduino
-//GND   marrom escuro     GND
-//Chuva  marrom claro      A1
-//Vazio  verde escuro       -
-//Temp    verde claro      D7
-//Rxwifi   azul claro      D4
-//Txwifi  azul escuro      D5
-//Vcc         laranja     Vcc
-//Luz          branco      A3
+/*** Pinout used on a 8-way cable:
+Function      Pin   WireColor
+GND           GND   DarkBrown
+RainSensor    D6    LightBrown
+TempHumSensor D7    LightGreen
+WiFiRx        D4    LightBlue
+WiFiTx        D5    DarkBlue
+Vcc           Vcc   Orange
+Light         A3    White
+Empty         -     DarkGreen
+*** Display ***
+SCL (display) A5
+SDA (display) A4
 
-// Display
-//SCL (display)     -      A5
-//SDA (display)     -      A4
+The GPS is a shield, not connected through cable.
+*/
 
 #include <avr/pgmspace.h>
 #include <SoftwareSerial.h>

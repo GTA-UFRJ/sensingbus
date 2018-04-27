@@ -3,15 +3,15 @@
 *Universidade Federal do Rio de Janeiro
 *Departamento de Engenharia Eletrica
 *Project: Sensing Bus
-*Subject: The sensing layer wifi module
+*Subject: The sensing layer controller module
 *********************************
-To be flashed to an ESP8266.
+To be flashed to an Arduino.
 
-This software receives data from the Controller and sends it over to the Flushing layer.
+This software reads data from the sensors and sends it to the Wireless Interface.
 
 */
 
-/*** Pinout used on a 6-way cable:
+/*** Pinout used on a 8-way cable:
 Function      Pin   WireColor
 GND           GND   DarkBrown
 RainSensor    D6    LightBrown
