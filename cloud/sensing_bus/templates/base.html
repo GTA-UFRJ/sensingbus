@@ -1,0 +1,91 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>SensingBus</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script>window.jQuery || document.write('<script src="js/vendor/jquery.min.js"><\/script>')</script>
+
+    <style>
+    .row-eq-height{
+      display: flex;
+      align-items: center;
+    }
+
+    .dropdown-menu-center {
+      left: 50%;
+      right: auto;
+      text-align: center;
+      transform: translate(50%, 0);
+    }
+
+    .dropdown-menu.dropdown-menu-center{
+      cursor: pointer;
+    }
+    </style>
+
+  </head>
+  <body>
+
+  <nav id="main-nav" class="navbar navbar-default">
+    <div class="col-md-2"></div>
+    <div class="container-fluid col-md-8">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#"><img src="{% static 'img/s_bus.png' %}"/></a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="/">Home</a></li>
+          <li><a href="/visualize">Visualize</a></li>
+          <li><a href="/docs">Docs</a></li>
+          <li><a href="/about">About</a></li>
+        </ul>
+
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+    <div class="col-md-2"></div>
+  </nav>
+
+
+  <div class ="container" style="height:87%; width:100%">
+    <div class="row" style="height:100%; width:100%;">
+      <div class="col-md-2"></div>
+      {% block content %} {%endblock %}
+      <div class="col-md-2"></div>
+    </div>
+  </div>
+
+  <!-- Bootstrap core JavaScript
+================================================== -->
+  <!-- Placed at the end of the document so the pages load faster -->
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+
+  <!-- Custom styles for this template -->
+  <link href="{% static 'css/base.css' %}" rel="stylesheet">
+
+  </body>
+</html>
