@@ -11,15 +11,19 @@ This software receives data from the Controller and sends it over to the Flushin
 
 */
 
-//Função        COLOR Arduino
-//GND   marrom escuro     GND
-//Chuva  marrom claro      D6
-//Vazio  verde escuro       -
-//Temp    verde claro      D7
-//Rxwifi   azul claro      D4
-//Txwifi  azul escuro      D5
-//Vcc         laranja     Vcc
-//Luz          branco      A3
+/*** Pinout used on a 6-way cable:
+Function      Pin   WireColor
+GND           GND   DarkBrown
+RainSensor    D6    LightBrown
+TempHumSensor D7    LightGreen
+WiFiRx        D4    LightBlue
+WiFiTx        D5    DarkBlue
+Vcc           Vcc   Orange
+Light         A3    White
+Empty         -     DarkGreen
+
+The GPS is a shield, not connected through cable.
+*/
 
 #include <avr/pgmspace.h> 
 #include <SoftwareSerial.h>
@@ -108,16 +112,9 @@ SoftwareSerial wifiSerial(WIFI_RX, WIFI_TX);
 void start_file() {
   strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
   SD.remove(buffer);
-  //if (SD.begin(10)) {
-    strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
-    File data_file = SD.open(buffer, FILE_WRITE);
-    data_file.close();
-  //}
- #if DEBUG
-  /*else{
-  print_debug(12); //File start failure
-  }*/
-#endif
+  strcpy_P(buffer, (char*)pgm_read_word(&(string_table[0])));
+  File data_file = SD.open(buffer, FILE_WRITE);
+  data_file.close();
 }
 
 #if DEBUG
@@ -134,7 +131,9 @@ void setup() {
 
   pinMode(10, OUTPUT);
   if (!SD.begin(10)) {
+#if DEBUG
     print_debug(12);
+#endif
     return;
   }
   start_file();
